@@ -1,0 +1,96 @@
+<div align="center" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('org.strasa.web.analysis.singlesite.view.model.OtherVars')">
+	<grid width="90%" oddRowSclass="false" zclass="none"
+		style="overflow:auto">
+		<columns width="200px">
+			<column label="" width="150px" />
+			<column label="" />
+		</columns>
+		<rows>
+			<row>
+				<cell>
+					<image style="cursor:pointer" id="addEnvButton"
+						src="/images/rightarrow_g.png" tooltip="Add Environment variable" />
+					Environment:
+				</cell>
+				<hlayout>
+					<textbox id="envTextBox" width="150px" readonly="true"
+						tabindex="7" />
+				</hlayout>
+
+			</row>
+
+			<row>
+				<cell>
+					<image style="cursor:pointer" id="addGenotypeButton"
+						src="/images/rightarrow_g.png" tooltip="Add Genotype variable" />
+					Genotype:
+				</cell>
+				<hlayout>
+					<textbox id="genotypeTextBox" width="150px"  readonly="true"
+						tabindex="7" />
+				</hlayout>
+			</row>
+			<row>
+				<label />
+				<cell>
+					<checkbox id="fixedCheckBox" label="Random" />
+					<space spacing="20px" />
+					<checkbox id="randomCheckBox" label="Fixed" />
+				</cell>
+			</row>
+
+			<row>
+				<label />
+				<label />
+				<label />
+			</row>
+
+			<row>
+				<cell>
+					<image style="cursor:pointer" id="addBlockButton"
+						src="/images/rightarrow_g.png" tooltip="Add Block variable" />
+					Block:
+				</cell>
+				<hlayout>
+					<textbox id="blockTextBox" width="150px"  readonly="true"
+						tabindex="7" />
+				</hlayout>
+			</row>
+			<row>
+				<cell>
+					<image style="cursor:pointer"
+						id="addReplicateButton" src="/images/rightarrow_g.png"
+						tooltip="Add Replicate variable" />
+					Replicate:
+				</cell>
+				<hlayout>
+					<textbox id="replicateTextBox" width="150px"  readonly="true"
+						tabindex="7" />
+				</hlayout>
+			</row>
+			<row>
+				<cell>
+					<image style="cursor:pointer" id="addRowButton"
+						src="/images/rightarrow_g.png" tooltip="Add Row variable" />
+					Row:
+				</cell>
+				<hlayout>
+					<textbox id="rowTextBox" width="150px"  readonly="true"
+						tabindex="7" />
+				</hlayout>
+			</row>
+			<row>
+				<cell>
+					<image style="cursor:pointer" id="addColumnButton"
+						src="/images/rightarrow_g.png" tooltip="Add Column variable" />
+					Column:
+				</cell>
+				<hlayout>
+					<textbox id="columnTextBox" width="150px"  readonly="true"
+						tabindex="7" />
+				</hlayout>
+			</row>
+		</rows>
+	</grid>
+</div>

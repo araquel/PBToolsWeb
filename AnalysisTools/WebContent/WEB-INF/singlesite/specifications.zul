@@ -1,0 +1,189 @@
+<zk>
+	<style src="../css/main.css" />
+	<div id="singleSiteSpecificationsWindow"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.pbtools.analysis.singlesite.view.model.Specifications')"
+		align="center" height="100%">
+		
+		<vlayout>
+			<grid zclass="none">
+				<columns>
+					<column label="" width="120px" />
+					<column label="" width="500px" />
+				</columns>
+				<rows>
+					<row>
+						<label value="Select Data" />
+						<hlayout spacing="50px">
+							<vlayout width="100%">
+								<radiogroup>
+									<vlayout width="100%"
+										spacing="10px">
+										<div align="left">
+											<hlayout>
+												<combobox
+													id="studiesCombo" visible="false" model="@load(vm.studies)"
+													readonly="true" selectedItem="@bind(vm.selectedStudy)"
+													onChange="@command('updateDataSetList')">
+													<template
+														name="model">
+														<comboitem
+															value="@load(each)" label="@load(each.name)" />
+													</template>
+												</combobox>
+												<button visible="false"
+													sclass="btn-danger" id="selectDataset" label="selectDataset"
+													image="/images/find.png"
+													onClick="@command('selectDataset')" />
+													
+												<button visible="false"
+													sclass="btn-danger" id="selectUploadedFile" label="selectUploadedFile"
+													image="/images/find.png"
+													onClick="@command('selectFromDatabase')" />
+												<combobox
+													id="dataSetCombo" visible="false"
+													model="@load(vm.studyDataSets)" readonly="true"
+													selectedItem="@bind(vm.selectedDataSet)"
+													onChange="@command('displaySelectDataSet')">
+													<template
+														name="model">
+														<comboitem
+															value="@load(each)" label="@load(each.title)" />
+													</template>
+												</combobox>
+
+												<label id="lblMsgUpload"
+													visible="@load(vm.variableDataVisible)"
+													value="@load(vm.dataFileName)" sclass="label-search" />
+												<button
+													sclass="btn-danger" id="selectDataBtn" label="From a Study"
+													image="/images/find.png"
+													onClick="@command('selectFromDatabase')" />
+
+												<button
+													sclass="btn-danger" id="uploadCSVbtn" upload="true"
+													label="From External File(.csv)" image="/images/find.png"
+													onUpload="@command('uploadCSV')" />
+
+												<button id="resetBtn"
+													label="Reset" onClick="@global-command('launchSingleSite')"
+													visible="false" sclass="btn-danger" />
+											</hlayout>
+										</div>
+									</vlayout>
+								</radiogroup>
+							</vlayout>
+						</hlayout>
+					</row>
+				</rows>
+			</grid>
+			<!-- 		</groupbox> -->
+			<groupbox id="grpVariableData" mold="3d" width="100%"
+				hflex="1" style="overflow:auto">
+				<caption label="Data Preview" />
+				<hlayout spacing="50px">
+					<vlayout>
+						<div id="datagrid"></div>
+					</vlayout>
+				</hlayout>
+			</groupbox>
+			<tabbox id="tabBox" height="750px">
+				<tabs id="tabs">
+					<tab id="tabModelSpecifications"
+						label="Model specifications" />
+					<tab label="Other options" />
+					<tab label="Graph options" />
+				</tabs>
+				<tabpanels id="tabPanels">
+					<tabpanel vflex="1">
+						<vbox>
+							<hbox>
+								<label value="Type of design" />
+								<combobox
+									model="@load(vm.typeOfDesignList)" readonly="true"
+									selectedIndex="@bind(vm.ssaModel.design)"
+									onChange="@command('updateVariableList', selectedIndex=self.selectedIndex)">
+									<template name="model">
+										<comboitem value="@load(each)"
+											label="@load(each)" />
+									</template>
+								</combobox>
+							</hbox>
+							<include id="includeVariableList"
+								src="/user/analysis/singlesite/variablelistboxes.zul" />
+						</vbox>
+					</tabpanel>
+					<tabpanel>
+						<include id="includeOtherOptions"
+							src="/user/analysis/singlesite/otheroptions.zul" />
+					</tabpanel>
+					<tabpanel>
+						<listbox id="listbox" width="100%">
+							<listhead>
+								<listheader hflex="1" />
+							</listhead>
+							<listitem>
+								<listcell>
+									<checkbox id="boxplotCheckBox"
+										label="Boxplot of the raw data" />
+								</listcell>
+							</listitem>
+							<listitem>
+								<listcell>
+									<checkbox id="histogramCheckBox"
+										label="Histogram of the raw data" />
+								</listcell>
+							</listitem>
+							<listitem>
+								<listcell>
+									<vbox>
+										<checkbox id="heatmapCheckBox"
+											label="Heatmap of the residuals" />
+										<hbox>
+											<space spacing="20px" />
+											<label
+												value="Field row variable:" />
+											<combobox
+												id="fieldRowComboBox" model="@load(vm.varNames)"
+												readonly="true">
+												<template
+													name="model">
+													<comboitem
+														value="@load(each)" label="@load(each)" />
+												</template>
+											</combobox>
+										</hbox>
+										<hbox>
+											<space spacing="20px" />
+											<label
+												value="Field column variable:" />
+											<combobox
+												id="fieldColumnComboBox" model="@load(vm.varNames)"
+												readonly="true">
+												<template
+													name="model">
+													<comboitem
+														value="@load(each)" label="@load(each)" />
+												</template>
+											</combobox>
+										</hbox>
+									</vbox>
+								</listcell>
+							</listitem>
+							<listitem>
+								<listcell>
+									<checkbox
+										id="diagnosticplotCheckBox" label="Diagnostic plots" />
+								</listcell>
+							</listitem>
+						</listbox>
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+			<button label="Run" onClick="@command('validateSsaInputs')"
+				sclass="btn-danger" />
+
+			<label value="@bind(vm.resultRServe)" multiline="true" />
+		</vlayout>
+	</div>
+</zk>

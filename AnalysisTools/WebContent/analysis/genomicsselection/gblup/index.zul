@@ -1,0 +1,19 @@
+<zk>
+	<div id="mainLinkageMappingWindow" apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.strasa.web.analysis.view.Index')" height="90%">
+		<div sclass="page-header">
+			<label value="Genome-based Best Linear Unbiased Prediction (GBLUP)" />
+		</div>
+			<tabbox id="tabBox" sclass="page-content">
+			<tabs id="tabs">
+				<tab label="Genomics Selection: GBLUP"
+					image="/images/find.png" />
+			</tabs>
+			<tabpanels id="tabPanels">
+				<tabpanel id="specificationsPanel" 	style="overflow:auto">
+					<include id="includeSpecifications" src="/user/analysis/genomicsselection/gblup/specifications.zul" />
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</div>
+</zk>

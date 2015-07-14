@@ -1,0 +1,13 @@
+<zk>
+		<div id = "inputB">
+				<groupbox id="inputbox" closable="true"
+					sclass="z-demo-config" width="600px">
+					Select input file (.qtx):
+					<separator />
+					Name:
+					<textbox width="400px" value = "@load(vm.value1)"/>
+					<button id="uploadButton2" label="Browse..."
+						upload="true" onUpload="@command('chooseFile1value1')" />
+				</groupbox>
+		</div>
+</zk>

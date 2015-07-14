@@ -1,0 +1,28 @@
+<window id="textViewerHtml" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('org.pbtools.analysis.view.ResultViewer')"
+	height="98%">
+	<vlayout height="98%">
+		<div align="Right">
+			<button label="Export results as .zip" visible="false"
+				sclass="btn-success" image="/images/export16.png" />
+		</div>
+		<tabbox id="tabBox" sclass="page-content" height="750px" hflex="1">
+			<tabs>
+				<tab id="txtResult" label="RESULT" />
+				<tab id="graphResult" label="GRAPHS" />
+				<tab id="csvResult" label="CSV" />
+			</tabs>
+			<tabpanels>
+				<tabpanel id="txtResultTab" style="overflow: auto" />
+				<tabpanel id="graphResultTab">
+					<hlayout>
+						<div id="graphResultDiv" width="250px"
+							height="800px" style="overflow: auto" />
+						<div id="zoomDiv" style="overflow: auto" hflex="1" vflex="1" />
+					</hlayout>
+				</tabpanel>
+				<tabpanel id="csvResultTab" style="overflow: auto" />
+			</tabpanels>
+		</tabbox>
+	</vlayout>
+</window>

@@ -1,0 +1,85 @@
+<zk>
+	<div id="phenobox">
+		<groupbox width="600px" id="pgroupbox">
+			Phenotype File:
+			<separator />
+			Format
+			<combobox id="geboFormat" model="@load(vm.fileFormats)"
+				autodrop="true" selectedIndex="@load(vm.selectedFileFormat)">
+				<template name="model">
+					<comboitem label="${each}" />
+				</template>
+			</combobox>
+			<separator />
+			Name:
+			<textbox width="400px" value="@load(vm.value1)" />
+			<button id="uploadButtson1" label="Browse..." upload="true"
+				onUpload="@command('chooseFile1value1', fileFormat=phenoFormat.selectedIndex)" />
+		</groupbox>
+		<separator />
+	</div>
+	<div id="matrixbox">
+		<groupbox width="600px" id="mgroupbox">
+			Relationship Matrix File:
+			<separator />
+			<radiogroup id="radiogroupMatrix" onCheck="@command('updateRadioOptions', chosenValue = self.selectedItem.value)" />
+			<radio label="import" value="import" radiogroup="radiogroupMatrix" selected="true"/> <space width="20px" />
+			<radio label="calculate"  value="calculate" radiogroup="radiogroupMatrix" />
+			<separator />
+			<label id="lblTypeOfMatrix" value="Type of matrix to generate:" visible="false"/>
+			<combobox id="typeOfMatrixCombobox" model="@load(vm.matrixTypes)"
+				autodrop="true" visible="false">
+				<template name="model">
+					<comboitem label="${each}" />
+				</template>
+			</combobox>
+			<separator />
+			<label id="matrixFileNameLabel" value="Name:" />
+			<textbox width="400px" value="@load(vm.value4)" />
+			<button id="btnUploadMatrixFile" label="Browse..." upload="true"
+				onUpload="@command('chooseFile1value4', fileFormat=phenoFormat.selectedIndex)" />
+		</groupbox>
+		<separator />
+
+	</div>
+	<div id="genobox">
+		<groupbox id="ggroupBox" closable="true" sclass="z-demo-config"
+			width="600px">
+			Genotype File:
+			<separator />
+			Format:
+			<combobox id="genoFormat" model="@load(vm.genotypeFileMarkerFormats)"
+				autodrop="true" selectedIndex="@load(vm.selectedFileFormat)">
+				<template name="model">
+					<comboitem label="${each}" />
+				</template>
+			</combobox>
+			<separator />
+			Name:
+			<textbox width="400px" value="@load(vm.value2)" />
+			<button id="uploadButton2" label="Browse..." upload="true"
+				onUpload="@command('chooseFile1value2', fileFormat=genoFormat.selectedIndex)" />
+		</groupbox>
+		<separator />
+	</div>
+	<div id="mfbox">
+		<groupbox id="mfgroupBox" closable="true" sclass="z-demo-config"
+			width="600px">
+			Map file:
+			<separator />
+			Format
+			<combobox id="mapFormat" model="@load(vm.fileFormats)"
+				autodrop="true" selectedIndex="@load(vm.selectedFileFormat)">
+				<template name="model">
+					<comboitem label="${each}" />
+				</template>
+			</combobox>
+			<separator />
+			Name:
+			<textbox width="400px" value="@load(vm.value3)" />
+			<button id="uploadButton3" label="Browse..." upload="true"
+				onUpload="@command('chooseFile1value3', fileFormat=mapFormat.selectedIndex)" />
+		</groupbox>
+		<separator />
+	</div>
+</zk>

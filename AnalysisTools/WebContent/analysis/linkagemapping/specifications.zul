@@ -1,0 +1,336 @@
+<zk>
+	<style src="../css/main.css" />
+	<div id="linkageMappingSpecificationsWindow"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.strasa.web.analysis.linkagemapping.view.Index')"
+		height="100%">
+		<tabbox id="tb" width="100%" height="750px" mold="accordion">
+			<tabs>
+				<tab label="Load Data" />
+				<tab label="Data Quality Check" /> 
+				<tab label="Analysis:" />
+			</tabs>
+			<tabpanels>
+				<tabpanel vflex="1">
+					<hlayout>			
+						<div>
+							<separator bar="false" />
+							Cross Type:
+							<combobox id="crosstype"
+								model="@load(vm.crosstypeList)"
+								selectedItem="@bind(vm.chosenCrosstype)"
+								onChange="@command('chooseCrossType', selected = self.selectedIndex)"
+								autodrop="true">
+								<template name="model">
+									<comboitem
+										label="@load(each)" />
+								</template>
+							</combobox>
+							
+							<label id="lblBCSpinner" value="BC:" visible="false"/>
+							<spinner id="spinnerBCnum" value="0" visible="false" />
+							<label id="lblFSpinner" value="F:" visible="true"/>
+							<spinner id="spinnerFnum" value="0" visible="true" />
+							<separator bar="true" />
+							Data Format:
+							<combobox id="dataformat"
+								model="@load(vm.dataFormatList)"
+								selectedItem="@bind(vm.chosenDataFormat)" visible="true"
+								autodrop="true"
+								onChange="@command('visibility', selected = self.selectedIndex)">
+								<template name="model">
+									<comboitem value="@load(each)"
+										label="@load(each)" />
+								</template>
+							</combobox>
+							<separator bar="false" />
+							<div id="defaultbox"></div>
+							<separator />
+							<button id="uploadButton" label="Load"
+								onClick="@command('uploadFiles')" sclass="btn-danger" />
+						</div>
+						<groupbox id="grpVariableData" mold="3d"
+							width="100%" hflex="1" style="overflow:auto" visible="false">
+							<caption label="Data Preview" />
+							<hlayout spacing="50px">
+								<vlayout>
+									<div id="datagrid"></div>
+								</vlayout>
+							</hlayout>
+						</groupbox>
+					</hlayout>
+				</tabpanel>
+				<tabpanel>
+					<hlayout>
+						<div>
+							<radiogroup id="datacheck1group" />
+							<checkbox id="cbMissingData"
+								label="Manage Missing data"
+								onCheck="@command('missingDataCheck')" />
+							<separator bar="false" />
+							<space spacing="20px" />
+							<radio id="delete"
+								radiogroup="datacheck1group" label="Delete   " />
+							<doublespinner id="dbCutOff" value="0.10"
+								step="0.1" />
+							<separator bar="false" />
+							<space spacing="20px" />
+							<radio id="impute"
+								radiogroup="datacheck1group" label="Impute  " />
+							<separator bar="false" spacing="20px" />
+							<checkbox id="checkDistortionTest"
+								label="Test for segregation distortion"
+								onCheck="@command('aggregationCheck')" />
+							<separator bar="false" />
+							<space spacing="20px" />
+							Level of Significance:
+							<doublespinner id="dbPvalCutOff"
+								value="0.05" step="0.1" />
+							<separator bar="false" spacing="20px" />
+							<checkbox id="doCompareGenoErrors"
+								label="Compare Genotypes" onCheck="@command('genotypeCheck')" />
+							<separator bar="false" />
+							<space spacing="20px" />
+							Cut-off proportion of matching genotypes:
+							<doublespinner id="dbCutOffP" value="0.90"
+								step="0.1" />
+							<separator bar="false" spacing="20px" />
+							<checkbox id="checkMarkerOrder"
+								label="Check marker order" onCheck="@command('markerCheck')" />
+							<separator bar="false" />
+							<space spacing="20px" />
+							Threshold:
+							<doublespinner id="dbLodThreshold" value="4"
+								step="0.1" />
+							<separator bar="false" spacing="20px" />
+							<checkbox id="doCheckGeno"
+								label="Identify likely genotyping errors"
+								onCheck="@command('errorCheck')" />
+							<separator bar="false" />
+							<space spacing="20px" />
+							Cut-off
+							<doublespinner id="dbLodCutOff" value="4"
+								step="0.1" />
+							<separator bar="false" />
+							<separator bar="false" />
+							<separator bar="false" />
+							<button label="Run"
+								onClick="@command('validateInputFiles')" sclass="btn-danger" />
+							<separator bar="false" />
+						<groupbox id="grpDataCheckView" mold="3d"
+							visible="false" width="100%" height="100%" vflex="1" hflex="1">
+							<caption label="Data Quality Check Preview" />
+							<div id="divDataCheckTxt" style="overflow:auto" vflex="1"> </div>
+						</groupbox>
+						</div>
+					</hlayout>
+				</tabpanel>
+
+				<tabpanel>
+					<listbox>
+						<listhead>
+							<listheader width="150px" />
+							<listheader />
+						</listhead>
+						<listitem>
+							<listcell label="Trait type:" />
+							<listcell>
+								<combobox id="traitType"
+									model="@load(vm.traitType)" autodrop="true"
+									selectedItem="@bind(vm.selectedTraitType)"
+									onChange="@command('updatePModel')">
+			    
+			    						<template name="model">
+										<comboitem label="${each}" />
+									</template>
+								</combobox>
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell label="Traits:" />
+							<listcell>
+								<div id="checkboxDiv">
+								<vlayout id="divVlayout" />
+								</div>
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell />
+						</listitem>
+						<listitem>
+							<listcell />
+							<listcell>
+								<vlayout>
+									<groupbox closable="true"
+										sclass="z-demo-config" vflex="1" hflex="1"
+										visible="@load(vm.mapping2)">
+										<caption label="Options:" />
+										<radiogroup
+											id="thresholdPValue" />
+										<checkbox id="cbHpresent"
+											label="Heterozygotes Present" />
+										<separator bar="false" />
+										Step:
+										<doublespinner id="dbCimStep"
+											value="10" step="0.1" />
+										<separator bar="false" />
+										Window Size:
+										<doublespinner id="dbCimWin"
+											value="20" step="0.1" />
+										<separator bar="false" />
+										Minimum Distance:
+										<doublespinner id="dbCimMinDist"
+											value="10" step="0.1" />
+										<separator bar="false" />
+										Threshold for p-value:
+										<separator bar="false" />
+										<space bar="false" width="20px" />
+										<radio label="Li and Ji"
+											radiogroup="thresholdPValue" id="Liji" />
+										<separator bar="false" />
+										<space bar="false" width="20px" />
+										<radio label="Numerical "
+											radiogroup="thresholdPValue" id="numerical" />
+										<space bar="false" width="10px" />
+										<doublespinner
+											id="dbthresholdNumericalValue" value="0.10" step="0.1" />
+									</groupbox>
+									<groupbox closable="true"
+										sclass="z-demo-config" vflex="1" hflex="1"
+										visible="@load(vm.mapping1)">
+										<caption label="Options:" />
+										No. Of Permutations:
+										<spinner
+											id="dbNPermutations" value="99" step="1" />
+										<separator bar="false" />
+										Phenotype Model :
+										<combobox id="pModel"
+											model="@load(vm.pModel)" autodrop="true"
+											selectedItem="@bind(vm.comboboxMapping)"
+											onChange="@command('choosePModel', selected = self.selectedItem)">
+											<template name="model">
+												<comboitem
+													label="${each}" />
+											</template>
+										</combobox>
+										<separator bar="false" />
+										Method:
+										<combobox id="comboPMethod"
+											model="@load(vm.pMethod)" autodrop="true"
+											selectedItem="@bind(vm.coboboxmapping2)">
+											<template name="model">
+												<comboitem
+													label="${each}" />
+											</template>
+										</combobox>
+									</groupbox>
+									<groupbox closable="true"
+										sclass="z-demo-config" vflex="1" hflex="1"
+										visible="@load(vm.mapping3)">
+										<caption label="Options:" />
+										Step Size:
+										<doublespinner id="dbMqmStepVal"
+											value="5.0" step="1.0" />
+										<separator bar="false" />
+										Window Size:
+										<doublespinner id="dbMqmWinVal"
+											value="25.0" step="1.0" />
+										<separator bar="false" />
+										<radiogroup id="Model" />
+										Model:
+										<separator bar="false" />
+										<space bar="false" width="20px" />
+										<radio label="additive"
+											radiogroup="Model" id="additive" />
+										<separator bar="false" />
+										<space bar="false" width="20px" />
+										<radio label="dominance"
+											radiogroup="Model" id="dominance" />
+										<separator bar="false" />
+										Algorithm:
+										<radiogroup id="Algorithm" />
+										<separator bar="false" />
+										<space bar="false" width="20px" />
+										<radio label="ML"
+											radiogroup="Algorithm" id="ML" />
+										<separator bar="false" />
+										<space bar="false" width="20px" />
+										<radio label="REML"
+											radiogroup="Algorithm" id="REML" />
+									</groupbox>
+									<groupbox closable="true"
+										sclass="z-demo-config" vflex="1" hflex="1"
+										visible="@load(vm.mapping4)">
+										<caption label="Options:" />
+										Step:
+										<doublespinner
+											id="bayesianStepSize" value="2" step="1.0" />
+										<separator bar="false" />
+										Method to find Loci:
+										<combobox id="lociMList"
+											model="@load(vm.lociMethod)" autodrop="true"
+											selectedItem="@bind(vm.comboboxmapping3)">
+											<template name="model">
+												<comboitem
+													label="${each}" />
+											</template>
+										</combobox>
+										<separator bar="false" />
+										Type of Scan:
+										<combobox id="scanTypeList"
+											model="@load(vm.scanType)" autodrop="true"
+											selectedItem="@bind(vm.comboboxmapping4)">
+											<template name="model">
+												<comboitem	
+													label="${each}" />
+											</template>
+										</combobox>
+										<separator bar="false" />
+										<checkbox id="cbSetupModel"
+											label="Set-up Interacting QTL Model"
+											onCheck="@command('QTLCheck')" />
+										<separator bar="false" />
+										<space width="30px" bar="false" />
+										<checkbox id="setup1"
+											label="Include Epistasis" />
+										<separator bar="false" />
+										<space width="30px" bar="false" />
+										<checkbox id="setup2"
+											label="Use Dependent Prior" />
+										<separator />
+										<space width="30px" bar="false" />
+										No. of main effects in model:
+										<doublespinner id="db16"
+											value="0" step="0.1" />
+										<separator bar="false" />
+										<space width="30px" bar="false" />
+										Prior expected number of QTLs:
+										<space width="10px" bar="false" />
+										Main Effect:
+										<textbox width="50px"           
+											id="maineffect" value="0" />
+										<space width="10px" bar="false" />
+										All:
+										<textbox width="50px" id="all"
+											value="0" />
+										<separator bar="false" />
+										<space width="30px" bar="false" />
+										Maximum Number of QTLs allowed:
+										<textbox width="100px"
+											id="maxnumber" value="0" />
+									</groupbox>
+								</vlayout>
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>
+								<button label="Run"
+									onClick="@command('runQTL')" sclass="btn-danger" />
+							</listcell>
+						</listitem>
+					</listbox>
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</div>
+</zk>

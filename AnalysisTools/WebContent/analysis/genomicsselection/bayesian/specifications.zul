@@ -1,0 +1,303 @@
+<zk>
+	<style src="../css/main.css" />
+	<div id="linkageMappingSpecificationsWindow"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.strasa.web.analysis.genomicsselection.bayesian.view.Index')"
+		height="100%">
+		<tabbox id="tb" width="100%" height="750px" mold="accordion">
+			<tabs>
+				<tab label="Data Input" />
+				<tab label="Data Quality Check" />
+				<tab label="Anlysis:" />
+			</tabs>
+			<tabpanels>
+				<tabpanel vflex="1">
+					<hlayout>
+						<div>
+							<separator bar="false" />
+							Format:
+							<combobox id="dataformat"
+								model="@load(vm.dataFormatList)"
+								autodrop="true">
+								<template name="model">
+									<comboitem value="@load(each)"
+										label="@load(each)" />
+								</template>
+							</combobox>
+							<separator bar="false" />
+							<div id="defaultbox"></div>
+							<separator />
+							<button id="uploadButton" label="Load"
+								onClick="@command('uploadFiles')" sclass="btn-danger" />
+						</div>
+						<groupbox id="grpVariableData" mold="3d"
+							width="100%" hflex="1" style="overflow:auto" visible="false">
+							<caption label="Data Preview" />
+							<hlayout spacing="50px">
+								<vlayout>
+									<div id="datagrid"></div>
+								</vlayout>
+							</hlayout>
+						</groupbox>
+					</hlayout>
+				</tabpanel>
+				<tabpanel>
+					<hlayout>
+						<div>
+							<listbox>
+								<listitem>
+									<listcell>
+										Maximum correlation of markers:
+									</listcell>
+									<listcell>
+										<doublespinner id="dbPvalCutOff"
+											value="0.90" step="0.1" />
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										Maximum proportion of missing
+										values per marker:
+									</listcell>
+									<listcell>
+										<doublespinner id="dbCutOffP"
+											value="0.10" step="0.1" />
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										Minimum minor allele frequency
+										(MAF):
+									</listcell>
+									<listcell>
+										<doublespinner
+											id="dbLodThreshold" value="0.5" step="0.1" />
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										Imputation type:
+									</listcell>
+									<listcell>
+										<combobox id="dataformata"
+											model="@load(vm.imputationTypes)" visible="true"
+											autodrop="true"
+											onChange="@command('visibility', selected = self.selectedIndex)">
+											<template name="model">
+												<comboitem
+													value="@load(each)" label="@load(each)" />
+											</template>
+										</combobox>
+									</listcell>
+								</listitem>
+							</listbox>
+							<separator bar="false" />
+							<separator bar="false" />
+							<separator bar="false" />
+							<button label="Check"
+								onClick="@command('validateInputFiles')" sclass="btn-danger" />
+							<separator bar="false" />
+							<separator bar="false" />
+
+						</div>
+						<groupbox id="grpDataCheckView" mold="3d"
+							visible="false" width="100%" height="100%" vflex="1" hflex="1">
+							<caption label="Data Quality Check Preview" />
+							<div id="divDataCheckTxt"
+								style="overflow:auto" vflex="1">
+							</div>
+						</groupbox>
+					</hlayout>
+				</tabpanel>
+
+				<tabpanel style="overflow:auto">
+					<listbox>
+						<listitem>
+							<listcell
+								label="Type of relationship matrix to be generated:" />
+							<listcell>
+								<combobox id="relMatrixCombo"
+									model="@load(vm.relMatrixTypes)" autodrop="true"
+									selectedItem="@bind(vm.selectedTraitType)"
+									onChange="@command('updatePModel')">
+
+									<template name="model">
+										<comboitem label="${each}" />
+									</template>
+								</combobox>
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell label="Trait:" />
+							<listcell>
+								<combobox id="traitTypes"
+									model="@load(vm.traitTypes)" autodrop="true"
+									selectedItem="@bind(vm.selectedTraitType)"
+									onChange="@command('updatePModel')">
+
+									<template name="model">
+										<comboitem label="${each}" />
+									</template>
+								</combobox>
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell label="Trait Heritability:" />
+							<listcell>
+								<radiogroup id="heritabilityTraits" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>
+								<space width="20px" />
+								<radio label="Value:"
+									radiogroup="heritabilityTraits" />
+							</listcell>
+							<listcell>
+								<doublespinner id="dbLodaThreshold"
+									value="0.1" step="0.1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>
+								<space width="20px" />
+								<radio label="Type:"
+									radiogroup="heritabilityTraits" />
+							</listcell>
+							<listcell>
+								<combobox id="trasitTypes"
+									model="@load(vm.traitHeritabilityTypes)" autodrop="true"
+									selectedItem="@bind(vm.selectedTraitType)"
+									onChange="@command('updatePModel')">
+
+									<template name="model">
+										<comboitem label="${each}" />
+									</template>
+								</combobox>
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell label="Number of iterations:" />
+							<listcell>
+								<doublespinner id="dbLoadaThreshold"
+									value="1500" step="1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell
+								label="Number of burn-in iterations:" />
+							<listcell>
+								<doublespinner value="500" step="1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell label="Thinning number:" />
+							<listcell>
+								<doublespinner value="5" step="1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell label="Model:" />
+							<listcell>
+								<combobox id="trassitTypes"
+									model="@load(vm.modelTypes)" autodrop="true"
+									selectedItem="@bind(vm.selectedTraitType)"
+									onChange="@command('updateModelParameters')">
+									<template name="model">
+										<comboitem label="${each}" />
+									</template>
+								</combobox>
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>
+								<space width="20px" />
+								Parameters:
+							</listcell>
+							<listcell />
+						</listitem>
+						<listitem>
+							<listcell>
+								<space width="40px" />
+								Degrees of freedom:
+							</listcell>
+							<listcell>
+								<doublespinner value="5" step="1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>
+								<space width="40px" />
+								Shape:
+							</listcell>
+							<listcell>
+								<doublespinner value="1.1" step="1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>
+								<space width="40px" />
+								Prior probability:
+							</listcell>
+							<listcell>
+								<doublespinner value="0.5" step="0.1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>
+								<space width="40px" />
+								Number of "prior counts":
+							</listcell>
+							<listcell>
+								<doublespinner value="10" step="1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>
+								<checkbox id="cbPerfsorsmPairwise"
+									checked="false" label="Perform cross-validation"
+									onClick="@command('updatePairwiseOptions', selected=self.checked)" />
+							</listcell>
+							<listcell />
+						</listitem>
+						<listitem>
+							<listcell>Number of folds:</listcell>
+							<listcell>
+								<doublespinner id="dbCutOfsfP"
+									value="2" step="1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>Number of replications:</listcell>
+							<listcell>
+								<doublespinner id="dbLodTshreshold"
+									value="1" step="1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>Sampling strategy:</listcell>
+							<listcell>
+								<combobox id="dataforsmata"
+									model="@load(vm.samplingStrategies)"
+									selectedItem="@bind(vm.chosenDataFormat)" visible="true"
+									autodrop="true"
+									onChange="@command('visibility', selected = self.selectedIndex)">
+									<template name="model">
+										<comboitem value="@load(each)"
+											label="@load(each)" />
+									</template>
+								</combobox>
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>
+								<button label="Run"
+									onClick="@command('runQTL')" sclass="btn-danger" />
+							</listcell>
+						</listitem>
+					</listbox>
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</div>
+</zk>

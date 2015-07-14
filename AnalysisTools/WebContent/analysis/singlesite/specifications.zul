@@ -1,0 +1,158 @@
+<zk>
+	<style src="../css/main.css" />
+	<div id="singleSiteSpecificationsWindow"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.pbtools.analysis.singlesite.view.model.Specifications')"
+		align="center" height="80%">
+
+		<vlayout>
+			<grid zclass="none">
+				<columns>
+					<column label="" width="120px" />
+					<column label="" width="500px" />
+				</columns>
+				<rows>
+					<row>
+						<label value="Select Data" />
+						<hlayout spacing="50px">
+							<vlayout width="100%">
+								<radiogroup>
+									<vlayout width="100%"
+										spacing="10px">
+										<div align="left">
+											<hlayout>
+												<label id="lblMsgUpload" 	
+													visible="@load(vm.variableDataVisible)"
+													value="@load(vm.dataFileName)" sclass="label-search" />
+												<button
+													id="uploadCSVbtn" upload="true"
+													label="From External File(.csv)" image="/images/find.png"
+													onUpload="@command('uploadCSV')" />
+
+												<button id="resetBtn"
+													label="Reset" onClick="@global-command('launchSingleSite')"
+													visible="false" zclass="btn-success" />
+											</hlayout>
+										</div>
+									</vlayout>
+								</radiogroup>
+							</vlayout>
+						</hlayout> 
+					</row>
+				</rows>
+			</grid>
+			<hlayout>
+				<tabbox id="tabBox" height="650px" hflex="1">
+					<tabs id="tabs">
+						<tab id="tabModelSpecifications"
+							label="Model specifications" />
+						<tab label="Other options" />
+						<tab label="Graph options" />
+					</tabs>
+					<tabpanels id="tabPanels">
+						<tabpanel vflex="1">
+							<vbox>
+								<hbox align="left">
+									<label value="Type of design" />
+									<combobox id="comboboxDesign" width="250px"
+									model="@load(vm.typeOfDesignList)" readonly="true"
+									selectedIndex="@bind(vm.ssaModel.design)"
+									onChange="@command('updateVariableList', selectedIndex=self.selectedIndex)">
+									<template name="model">
+										<comboitem value="@load(each)"
+											label="@load(each)" />
+									</template>
+								</combobox>
+								</hbox>
+								<separator height="20px" />
+								<include id="includeVariableList"
+									src="/analysis/singlesite/variablelistboxes.zul" />
+							</vbox>
+						</tabpanel>
+						<tabpanel>
+							<include id="includeOtherOptions"
+								src="/analysis/singlesite/otheroptions.zul" />
+						</tabpanel>
+						<tabpanel>
+							<listbox id="listbox" width="100%">
+								<listhead>
+									<listheader hflex="1" />
+								</listhead>
+								<listitem>
+									<listcell>
+										<checkbox id="boxplotCheckBox"
+											label="Boxplot of the raw data" />
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										<checkbox id="histogramCheckBox"
+											label="Histogram of the raw data" />
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										<vbox>
+											<checkbox
+												id="heatmapCheckBox" label="Heatmap of the residuals" />
+											<hbox>
+												<space spacing="20px" />
+												<label
+													value="Field row variable:" />
+												<combobox
+													id="fieldRowComboBox" model="@load(vm.varNames)"
+													readonly="true" onChange="@command('heatmapRowColumnCheck', selectedIndex1=self.selectedIndex,  selectedIndex2=fieldColumnComboBox.selectedIndex)">
+													<template
+														name="model">
+														<comboitem
+															value="@load(each)" label="@load(each)" />
+													</template>
+												</combobox>
+											</hbox>
+											<hbox>
+												<space spacing="20px" />
+												<label
+													value="Field column variable:" />
+												<combobox
+													id="fieldColumnComboBox" model="@load(vm.varNames)"
+													readonly="true" onChange="@command('heatmapRowColumnCheck', selectedIndex1=self.selectedIndex,  selectedIndex2=fieldRowComboBox.selectedIndex)">
+													<template
+														name="model">
+														<comboitem
+															value="@load(each)" label="@load(each)" />
+													</template>
+												</combobox>
+											</hbox>
+										</vbox>
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										<checkbox
+											id="diagnosticplotCheckBox" label="Diagnostic plots" />
+									</listcell>
+								</listitem>
+							</listbox>
+						</tabpanel>
+					</tabpanels>
+				</tabbox>
+				<space width="10px"/>
+				<vlayout hflex="1">	
+				<separator spacing="30px" />
+				<groupbox id="grpVariableData" mold="3d" width="100%"
+					 style="overflow:auto">
+					<caption label="Data Preview" />
+							<div id="datagrid"  style="overflow:auto"></div>
+				</groupbox>
+				</vlayout>
+			</hlayout>
+			<label value="@bind(vm.resultRServe)" multiline="true" />
+			<button id="btnRunAnalysis" label="Run"
+				onClick="@command('validateSsaInputs')" zclass="btn-success" />
+
+			<button id="btnViewResult" label="View Analysis Result"
+				onClick="@command('showAnalysisResults')" zclass="btn-success"
+				visible="false" />
+		</vlayout>
+	</div>
+</zk>

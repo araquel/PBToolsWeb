@@ -1,0 +1,24 @@
+<?link href="/theme/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css"?>
+<?link href="/theme/css/fonts.css" rel="stylesheet" type="text/css"?>
+<?link href="/theme/less/index.css.dsp" rel="stylesheet" type="text/css"?>
+<?link href="/theme/css/main.css" rel="stylesheet" type="text/css"?>
+<zk>
+	<div id="mainSingleSiteWindow" apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')"
+		 >
+<!-- 		<div sclass="page-header" /> -->
+		<!-- 			<label value="Single-site Analysis" /> -->
+		<tabbox id="tabBox" sclass="page-content">
+			<tabs id="tabs">
+				<tab label="Single-site Analysis" />
+			</tabs>
+			<tabpanels id="tabPanels">
+				<tabpanel id="specificationsPanel"
+					style="overflow:auto"> 
+					<include id="includeSpecifications"
+						src="/analysis/singlesite/specifications.zul" />
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</div>
+</zk>

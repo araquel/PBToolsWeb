@@ -1,0 +1,255 @@
+<zk>
+	<style src="../css/main.css" />
+	<div id="linkageMappingSpecificationsWindow"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.strasa.web.analysis.genomicsselection.gblup.view.Index')"
+		height="100%">
+		<tabbox id="tb" width="100%" height="750px" mold="accordion">
+			<tabs>
+				<tab label="Data Input" />
+				<tab label="Data Quality Check" />
+				<tab label="Imputation" />
+				<tab label="Analysis:" />
+			</tabs>
+			<tabpanels>
+				<tabpanel vflex="1">
+					<hlayout>
+						<div>
+							<separator bar="false" />
+							Format:
+							<combobox id="dataformat"
+								model="@load(vm.dataFormatList)"
+								selectedItem="@bind(vm.chosenDataFormat)" visible="true"
+								autodrop="true">
+								<template name="model">
+									<comboitem value="@load(each)"
+										label="@load(each)" />
+								</template>
+							</combobox>
+							<separator bar="false" />
+							<div id="defaultbox"></div>
+							<separator />
+							<button id="uploadButton" label="Load"
+								onClick="@command('uploadFiles')" sclass="btn-danger" />
+						</div>
+						<groupbox id="grpVariableData" mold="3d"
+							width="100%" hflex="1" style="overflow:auto" visible="false">
+							<caption label="Data Preview" />
+							<hlayout spacing="50px">
+								<vlayout>
+									<div id="datagrid"></div>
+								</vlayout>
+							</hlayout>
+						</groupbox>
+					</hlayout>
+				</tabpanel>
+				<tabpanel>
+					<hlayout>
+						<div>
+							<listbox>
+								<listitem>
+									<listcell>
+										Maximum correlation of markers:
+									</listcell>
+									<listcell>
+										<doublespinner id="dbPvalCutOff"
+											value="0.05" step="0.1" />
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										Maximum proportion of missing
+										values per marker:
+									</listcell>
+									<listcell>
+										<doublespinner id="dbCutOffP"
+											value="0.90" step="0.1" />
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										Minimum minor allele frequency
+										(MAF):
+									</listcell>
+									<listcell>
+										<doublespinner
+											id="dbLodThreshold" value="4" step="0.1" />
+									</listcell>
+								</listitem>
+							</listbox>
+							<separator bar="false" />
+							<separator bar="false" />
+							<separator bar="false" />
+							<button label="Check"
+								onClick="@command('validateInputFiles')" sclass="btn-danger" />
+							<separator bar="false" />
+							<separator bar="false" />
+						</div>
+						<groupbox id="grpDataCheckView" mold="3d"
+							visible="false" width="100%" height="100%" vflex="1" hflex="1">
+							<caption label="Data Quality Check Preview" />
+							<div id="divDataCheckTxt"
+								style="overflow:auto" vflex="1">
+							</div>
+						</groupbox>
+					</hlayout>
+				</tabpanel>
+				<tabpanel style="overflow:auto">
+					<div id="phenobox">
+						<hbox>
+							Type:
+							<combobox id="phenoFormats"
+								model="@load(vm.imputationTypes)" autodrop="true">
+								<template name="model">
+									<comboitem label="${each}" />
+								</template>
+							</combobox>
+						</hbox>
+						<separator />
+						<groupbox width="600px" id="pgroupbox" visible="false">
+							Family Structure File:
+							<separator />
+							Format:
+							<combobox id="phenoFosdsrmat"
+								model="@load(vm.fileFormats)" autodrop="true"
+								selectedIndex="@load(vm.selectedFileFormat)">
+								<template name="model">
+									<comboitem label="${each}" />
+								</template>
+							</combobox>
+							<separator />
+							Name:
+							<textbox width="400px"
+								value="@load(vm.value1)" />
+							<button id="uploadButtson1"
+								label="Browse..." upload="true"
+								onUpload="@command('chooseFile1value1', fileFormat=phenoFormat.selectedIndex)" />
+						</groupbox>
+						<separator />
+						<button id="imputateButton" label="Run"
+								onClick="@command('uploadFiles')" sclass="btn-danger" />
+					</div>
+				</tabpanel>
+				<tabpanel style="overflow:auto">
+					<hbox>
+						<listbox id="numericLb" hflex="1" rows="4"
+							vflex="1" width="300px" checkmark="true" multiple="true">
+							<listhead>
+								<listheader label="SelectVariables" />
+							</listhead>
+							<template name="model">
+								<listitem>
+									<listcell label="${each}" />
+								</listitem>
+							</template>
+						</listbox>
+
+						<space width="10px"></space>
+
+						<vlayout>
+							<hbox>
+								<vlayout spacing="10px" width="24px">
+									<separator height="50px" />
+									<image style="cursor:pointer"
+										id="chooseRessponseBtn" src="/images/rightarrow_g.png"
+										tooltip="Add response variable"
+										onClick="@global-command('addResponse')" />
+									<image style="cursor:pointer"
+										id="removeRessponseBtn" src="/images/leftarrow_g.png"
+										tooltip="Remove response variable"
+										onClick="@global-command('removeResponse')" />
+								</vlayout>
+
+								<space width="10px"></space>
+								<listbox id="respsonseLb" hflex="1"
+									multiple="true" rows="4" checkmark="true" width="300px">
+									<listhead>
+										<listheader
+											label="Traits:" />
+									</listhead>
+									<template name="model">
+										<listitem>
+											<listcell label="${each}" />
+										</listitem>
+									</template>
+								</listbox>
+							</hbox>
+
+							<hbox>
+								<vlayout spacing="10px" width="24px">
+									<separator height="50px"></separator>
+									<image style="cursor:pointer"
+										id="chooseResponseBtn" src="/images/rightarrow_g.png"
+										tooltip="Add response variable"
+										onClick="@global-command('addResponse')" />
+									<image style="cursor:pointer"
+										id="removeResponseBtn" src="/images/leftarrow_g.png"
+										tooltip="Remove response variable"
+										onClick="@global-command('removeResponse')" />
+								</vlayout>
+
+								<space width="10px"></space>
+
+								<listbox id="responseLb" hflex="1"
+									multiple="true" rows="4" checkmark="true" width="300px">
+									<listhead>
+										<listheader
+											label="Covariates:" />
+									</listhead>
+									<template name="model">
+										<listitem>
+											<listcell label="${each}" />
+										</listitem>
+									</template>
+								</listbox>
+							</hbox>
+						</vlayout>
+					</hbox>
+					<separator height="20px" />
+					<listbox>
+						<listitem>
+							<listcell>
+								<checkbox id="cbPerfsorsmPairwise"
+									checked="false" label="Perform cross-validation"
+									onClick="@command('updatePairwiseOptions', selected=self.checked)" />
+							</listcell>
+							<listcell />
+						</listitem>
+						<listitem>
+							<listcell>Number of folds:</listcell>
+							<listcell>
+								<doublespinner id="dbCutOfsfP"
+									value="0.90" step="0.1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>Number of replications:</listcell>
+							<listcell>
+								<doublespinner id="dbLodTshreshold"
+									value="4" step="0.1" />
+							</listcell>
+						</listitem>
+						<listitem>
+							<listcell>Sampling strategy:</listcell>
+							<listcell>
+								<hbox>
+									<radiogroup
+										id="radiogroupSamplingStrategy" />
+									<radio label="random"
+										radiogroup="radiogroupSamplingStrategy" selected="true"/>
+									<space width="20px" />
+									<radio
+										label="with population structure"
+										radiogroup="radiogroupSamplingStrategy" />
+								</hbox>
+							</listcell>
+						</listitem>
+					</listbox>
+					<separator height="25px" />
+					<button label="Run"
+									onClick="@command('runQTL')" sclass="btn-danger" />
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</div>
+</zk>

@@ -1,0 +1,95 @@
+<div viewModel="@id('vm') @init('org.pbtools.analysis.singlesite.view.model.Specifications')"
+	height="98%">
+	<vlayout>
+		<hlayout>
+			<radiogroup id="performPairwiseGroup" />
+			<groupbox hflex="1" id="groupGenotypeFixed" open="true"
+				onOpen="@command('checkIfGenotypeOptionIsSelected', selected='fixedCheckBox', groupbox=self)">
+				<caption>Options for genotype as fixed</caption>
+				<checkbox id="cbPerformPairwise" checked="false"
+					label="Perform pairwise mean comparisons"
+					onClick="@command('updatePairwiseOptions', selected=self.checked)" />
+				<groupbox contentStyle="border:0"
+					id="groupPerformPairwise" open="false">
+					<vbox style="margin:5px 5px 5px 25px">
+						<radio id="compareWithControlsBtn"
+							label="Compare with control(s)"
+							radiogroup="performPairwiseGroup"
+							onClick="@command('updateControlOptionsVisibility')"/>
+						<radio id="performAllPairwiseBtn"
+							label="Perform all comparisons"
+							radiogroup="performPairwiseGroup"
+							onClick="@command('updateControlOptionsVisibility')" />
+						<hbox style="margin:0px 0px 0px 25px">
+							Level of significance:
+							<doublebox id="pairwiseAlphaTextBox"
+								value="0.05" />
+						</hbox>
+					</vbox>
+				</groupbox>
+			</groupbox>
+
+			<separator />
+
+			<groupbox hflex="1" id="groupGenotypeRandom" open="false"
+				onOpen="@command('checkIfGenotypeOptionIsSelected', selected='randomCheckBox', groupbox=self)">
+				<caption>Options for genotype as random</caption>
+				<vbox>
+					<checkbox id="excludeControlsCheckBox"
+						label="Exclude controls in the estimation of genotypic variance"
+						onClick="@command('updateControlOptionsVisibility')"/>
+					<checkbox id="estimateGenotypeCheckBox"
+						label="Estimate genotypic and phenotypic corelations"
+						disabled="true" />
+				</vbox>
+			</groupbox>
+		</hlayout>
+		<groupbox hflex="1" id="groupLevelOfControls"
+			open="@bind(vm.genotypeControlsOpen)" onClick="@command('checkIfControlLevelsNeeded')">
+			<caption>Specify control(s):</caption>
+			<hbox>
+				<listbox id="genotypeLevelsLb" hflex="1" rows="4"  checkmark="true"
+					width="300px">
+					<listhead>
+						<listheader label="Levels of Genotype:" />
+					</listhead>
+					<template name="model">
+						<listitem>
+							<listcell label="${each}" />
+						</listitem>
+					</template>
+				</listbox>
+				<space width="10px"></space>
+				<image style="cursor:pointer"
+					id="addGenotypeControlsButton" src="/images/rightarrow_g.png"
+					tooltip="Add Control variable" align="center"
+					onClick="@global-command('moveListItem', fromList=genotypeLevelsLb, toList=controlsLb)" />
+				<image style="cursor:pointer"
+					id="removeGenotypeControlsButton" src="/images/leftarrow_g.png"
+					tooltip="Remove Control variable" align="center"
+					onClick="@global-command('moveListItem', fromList=controlsLb, toList=genotypeLevelsLb)" />
+				<space width="10px"></space>
+				<listbox id="controlsLb" hflex="1" rows="4"  checkmark="true"
+					width="300px">
+					<listhead>
+						<listheader label="Control(s):" />
+					</listhead>
+					<template name="model">
+						<listitem>
+							<listcell label="${each}" />
+						</listitem>
+					</template>
+				</listbox>
+			</hbox>
+		</groupbox>
+		<groupbox hflex="1">
+			<caption>Display:</caption>
+			<vbox>
+				<checkbox label="Descriptive Statistics"
+					id="descriptiveStatCheckBox" />
+				<checkbox label="Variance Components"
+					id="varComponentsCheckBox" />
+			</vbox>
+		</groupbox>
+	</vlayout>
+</div>

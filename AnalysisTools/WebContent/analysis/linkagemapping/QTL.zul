@@ -1,0 +1,25 @@
+<zk>
+	<div id="crossgroupbox">
+		<groupbox id="crossgroupbox1" closable="true"
+			sclass="z-demo-config" width="600px">
+			Select cross file (.cro):
+			<separator />
+			Name:
+			<textbox width="400px" value="@load(vm.value1)" />
+			<button label="Browse..." upload="true"
+				onUpload="@command('chooseFile1value1', fileFormat=4)" />
+		</groupbox>
+
+		<separator />
+
+		<groupbox id="mapbox2" closable="true" sclass="z-demo-config"
+			width="600px">
+			Select map file (.map):
+			<separator />
+			Name:
+			<textbox width="400px" value="@load(vm.value2)" />
+			<button label="Browse..." upload="true"
+				onUpload="@command('chooseFile1value2', fileFormat=5)" />
+		</groupbox>
+	</div>
+</zk>

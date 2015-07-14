@@ -1,0 +1,26 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window
+		apply="org.pbtools.analysis.result.view.model.FileComposer">
+		<style>
+			.h-inline-block { display: inline-block; _display: inline; }
+		</style>
+		<tabbox id="tabBox" sclass="page-content" hflex="1" vflex="1">
+			<tabs id="treeTabs">
+				<tab label="Analysis Results" image="/images/find.png" />
+			</tabs>
+			<tabpanels id="treeTabPanels">
+				<tabpanel id="treePanel">
+					<hlayout>
+						<tree id="tree" width="400px" height="1000px" style="overflow: auto" >
+							<treecols>
+								<treecol />
+							</treecols>
+						</tree>
+						<div id="viewPanel"  style="overflow: auto" hflex="1" vflex="1"/>
+					</hlayout>
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</window>
+</zk>

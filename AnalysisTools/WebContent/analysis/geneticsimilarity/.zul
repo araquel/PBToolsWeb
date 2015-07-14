@@ -1,0 +1,45 @@
+<zk>
+	<style src="../css/main.css" />
+
+	<div style="padding:10px 0px 15px 20px" align="left">
+		<label class="header-menu">Single-site Analysis</label>
+	</div>
+	<div id="mainBrowseWindow" apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.strasa.web.analysis.singlesite.view.model.Index')"
+		height="98%" width="98%" align="center">
+
+		<separator height="5px"></separator>
+
+		<tabbox id="tabBox">
+			<tabs id="tabs">
+				<tab label="Model Specifications" />
+				<tab label="Options" />
+				<tab label="Graphs" />
+			</tabs>
+			<tabpanels id="tabPanels">
+				<tabpanel>
+					<vbox>
+						<hbox>
+							<label value="Type of design" />
+							<combobox readonly="true">
+<!-- 								<template name="model"> -->
+									<comboitem 
+										label="name" />
+									<comboitem 
+										label="name2" />
+<!-- 								</template> -->
+							</combobox>
+						</hbox>
+					</vbox>
+				</tabpanel>
+				<tabpanel />
+				<tabpanel />
+			</tabpanels>
+		</tabbox>
+<button label="Test"
+						onClick="@command('runRserve')"
+						class="grid-link" />
+						
+		<label  value="@bind(vm.resultRServe)" multiline="true" />
+	</div>
+</zk>

@@ -1,0 +1,25 @@
+<zk>
+				<div id = "datagroupbox">
+				
+				<groupbox id="datagroupBox" closable="true"
+					sclass="z-demo-config" width="600px">
+					Select data file (.raw):
+					<separator />
+					Name:
+					<textbox width="400px" value = "@load(vm.value1)"/>
+					<button label="Browse..." upload="true" onUpload="@command('chooseFile1value1', fileFormat=6)"/>
+				</groupbox>
+				<separator />
+
+				<groupbox id="mapbox1" closable="true"
+					sclass="z-demo-config" width="600px">
+					Select map file (.txt or .maps):
+					<separator />
+					Name:
+					<textbox width="400px" value= "@load(vm.value2)"/>
+					<button label="Browse..." upload="true" onUpload="@command('chooseFile1value2', fileFormat=phenoFormat.selectedIndex)"/>
+				</groupbox>
+				<separator />
+
+				</div>
+</zk>

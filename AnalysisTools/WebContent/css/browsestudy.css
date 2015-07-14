@@ -1,0 +1,2 @@
+<c:set var="ImgUrl" value="${c:encodeURL('/widgets/layout/group_box/img')}" scope="request" />
+

@@ -1,0 +1,8 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window border="none" sizable="true" maximizable="true" vflex="1">
+		<iframe hflex="1"  vflex="1" id="reportframe" 
+			content="${arg.pdfFile}">
+		</iframe>
+	</window>
+</zk>

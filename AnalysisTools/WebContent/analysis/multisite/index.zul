@@ -1,0 +1,20 @@
+<zk>
+	<div id="mainSingleSiteWindow" apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.strasa.web.analysis.view.Index')">
+		<div sclass="page-header">
+			<label value="Multi-site Analysis" />
+		</div>
+			<tabbox id="tabBox" sclass="page-content" height="1000px">
+			<tabs id="tabs">
+				<tab label="Multi-site Analysis"
+					image="/images/find.png" />
+			</tabs>
+			<tabpanels id="tabPanels">
+				<tabpanel id="specificationsPanel">
+					<include id="includeSpecifications" src="/user/analysis/multisite/specifications.zul" />
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</div>
+</zk>
+

@@ -1,0 +1,26 @@
+<div align="center" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('org.pbtools.analysis.singlesite.view.model.GraphOptions')">
+	<listbox id="listbox" width="100%">
+		<listhead>
+			<listheader hflex="1" />
+		</listhead>
+		<listitem>
+			<listcell>
+				<checkbox id="boxplotCheckBox"
+					label="Boxplot across environments" />
+			</listcell>
+		</listitem>
+		<listitem>
+			<listcell>
+				<checkbox id="histogramCheckBox"
+					label="Histogram across environments" />
+			</listcell>
+		</listitem>
+		<listitem>
+			<listcell>
+				<checkbox id="diagnosticplotCheckBox"
+					label="Diagnostic plots" />
+			</listcell>
+		</listitem>
+	</listbox>
+</div>

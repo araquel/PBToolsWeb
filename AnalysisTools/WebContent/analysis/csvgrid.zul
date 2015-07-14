@@ -1,0 +1,18 @@
+<zk>
+	<grid model="@bind(vm.dataList)"  vflex="1" hflex="1"
+		emptyMessage="No data loaded...">
+		<columns children="@load(vm.columnList)">
+			<template name="children">
+				<column hflex="1" label="@load(each)" />
+			</template>
+		</columns>
+		<rows children="@bind(vm.csvData)">
+			<template name="children" var="data">
+				<row>
+					<label forEach="${data}" value="${each}" />
+				</row>
+			</template>
+		</rows>
+	</grid>
+	
+</zk>

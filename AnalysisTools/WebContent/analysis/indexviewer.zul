@@ -1,0 +1,16 @@
+<zk>
+	<div id="main" apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')">
+
+		<separator height="5px"></separator>
+
+		<tabbox id="fileViewerTabBox" sclass="page-content">
+			<tabs id="tabs">
+				<tab label="Results"
+					image="/images/find.png" />
+			</tabs> 
+			<tabpanels id="tabPanels">
+			</tabpanels>
+		</tabbox>
+	</div>
+</zk>

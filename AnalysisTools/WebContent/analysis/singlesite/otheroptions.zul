@@ -1,5 +1,4 @@
-<div
-	viewModel="@id('vm') @init('org.pbtools.analysis.singlesite.view.model.Specifications')"
+<div viewModel="@id('vm') @init('org.pbtools.analysis.singlesite.view.model.Specifications')"
 	height="98%">
 
 	<vlayout>

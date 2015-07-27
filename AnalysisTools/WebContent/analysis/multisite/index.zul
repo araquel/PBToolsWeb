@@ -1,6 +1,10 @@
+<?link href="/theme/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css"?>
+<?link href="/theme/css/fonts.css" rel="stylesheet" type="text/css"?>
+<?link href="/theme/less/index.css.dsp" rel="stylesheet" type="text/css"?>
+<?link href="/theme/css/main.css" rel="stylesheet" type="text/css"?>
 <zk>
 	<div id="mainSingleSiteWindow" apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.strasa.web.analysis.view.Index')">
+		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')">
 		<div sclass="page-header">
 			<label value="Multi-site Analysis" />
 		</div>
@@ -11,10 +15,9 @@
 			</tabs>
 			<tabpanels id="tabPanels">
 				<tabpanel id="specificationsPanel">
-					<include id="includeSpecifications" src="/user/analysis/multisite/specifications.zul" />
+					<include id="includeSpecifications" src="specifications.zul" />
 				</tabpanel>
 			</tabpanels>
 		</tabbox>
 	</div>
 </zk>
-

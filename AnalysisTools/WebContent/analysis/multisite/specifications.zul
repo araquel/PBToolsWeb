@@ -2,9 +2,7 @@
 	<style src="../css/main.css" />
 	<div id="singleSiteSpecificationsWindow"
 		apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.strasa.web.analysis.multisite.view.model.Specifications')"
-		align="center" height="100%">
-
+		viewModel="@id('vm') @init('org.pbtools.analysis.multisite.view.model.Specifications')" align="center" height="80%">
 		<vlayout>
 			<grid zclass="none">
 				<columns>
@@ -20,75 +18,40 @@
 									<vlayout width="100%"
 										spacing="10px">
 										<div align="left">
-		 									<hlayout>
-												<combobox
-													id="studiesCombo" visible="false" model="@load(vm.studies)"
-													readonly="true" selectedItem="@bind(vm.selectedStudy)"
-													onChange="@command('updateDataSetList')">
-													<template
-														name="model">
-														<comboitem
-															value="@load(each)" label="@load(each.name)" />
-													</template>
-												</combobox>
-												<combobox
-													id="dataSetCombo" visible="false"
-													model="@load(vm.studyDataSets)" readonly="true"
-													selectedItem="@bind(vm.selectedDataSet)"
-													onChange="@command('displaySelectDataSet')">
-													<template
-														name="model">
-														<comboitem
-															value="@load(each)" label="@load(each.title)" />
-													</template>
-												</combobox>
-												<label id="lblMsgUpload"
+											<hlayout>
+												<label id="lblMsgUpload" 	
 													visible="@load(vm.variableDataVisible)"
 													value="@load(vm.dataFileName)" sclass="label-search" />
 												<button
-													sclass="btn-danger" id="selectDataBtn" label="From a Study"
-													image="/images/find.png"
-													onClick="@command('selectFromDatabase')" />
-												<button
-													sclass="btn-danger" id="uploadCSVbtn" upload="true"
+													id="uploadCSVbtn" upload="true"
 													label="From External File(.csv)" image="/images/find.png"
 													onUpload="@command('uploadCSV')" />
-
 												<button id="resetBtn"
 													label="Reset" onClick="@global-command('launchMultiSite')"
-													visible="false" sclass="btn-danger" />
+													visible="false" zclass="btn-success" />
 											</hlayout>
 										</div>
 									</vlayout>
 								</radiogroup>
 							</vlayout>
-						</hlayout>
+						</hlayout> 
 					</row>
 				</rows>
 			</grid>
-			<!-- 		</groupbox> -->
-			<groupbox id="grpVariableData" mold="3d" width="100%"
-				hflex="1" style="overflow:auto">
-				<caption label="Data Preview" />
-				<hlayout spacing="50px">
-					<vlayout>
-						<div id="datagrid"></div>
-					</vlayout>
-				</hlayout>
-			</groupbox>
-			<tabbox id="tabBox" height="750px">
-				<tabs id="tabs">
-					<tab id="tabModelSpecifications"
-						label="Model specifications" />
-					<tab label="Other options" />
-					<tab label="Graph options" />
-				</tabs>
-				<tabpanels id="tabPanels">
-					<tabpanel vflex="1">
-						<vbox>
-							<hbox>
-								<label value="Type of design" />
-								<combobox
+			<hlayout>
+				<tabbox id="tabBox" height="650px" hflex="1">
+					<tabs id="tabs">
+						<tab id="tabModelSpecifications"
+							label="Model specifications" />
+						<tab label="Other options" />
+						<tab label="Graph options" />
+					</tabs>
+					<tabpanels id="tabPanels">
+						<tabpanel vflex="1">
+							<vbox>
+								<hbox align="left">
+									<label value="Type of design" />
+									<combobox id="comboboxDesign" width="250px"
 									model="@load(vm.typeOfDesignList)" readonly="true"
 									selectedIndex="@bind(vm.msaModel.design)"
 									onChange="@command('updateVariableList', selectedIndex=self.selectedIndex)">
@@ -97,46 +60,60 @@
 											label="@load(each)" />
 									</template>
 								</combobox>
-							</hbox>
-							<include id="includeVariableList"
-								src="/user/analysis/multisite/variablelistboxes.zul" />
-						</vbox>
-					</tabpanel>
-					<tabpanel>
-						<include id="includeOtherOptions"
-							src="/user/analysis/multisite/otheroptions.zul" />
-					</tabpanel>
-					<tabpanel>
-						<listbox id="listbox" width="100%">
-							<listhead>
-								<listheader hflex="1" />
-							</listhead>
-							<listitem>
-								<listcell>
-									<checkbox id="boxplotCheckBox"
-										label="Boxplot across environments" />
-								</listcell>
-							</listitem>
-							<listitem>
-								<listcell>
-									<checkbox id="histogramCheckBox"
-										label="Histogram across environments" />
-								</listcell>
-							</listitem>
-							<listitem>
-								<listcell>
-									<checkbox
-										id="diagnosticplotCheckBox" label="Diagnostic plots" />
-								</listcell>
-							</listitem>
-						</listbox>
-					</tabpanel>
-				</tabpanels>
-			</tabbox>
-			<button label="Run" onClick="@command('validateMsaInputs')"
-				sclass="btn-danger" />
-
+								</hbox>
+								<separator height="20px" />
+								<include id="includeVariableList"
+									src="/analysis/multisite/variablelistboxes.zul" />
+							</vbox>
+						</tabpanel>
+						<tabpanel>
+							<include id="includeOtherOptions"
+								src="/analysis/multisite/otheroptions.zul" />
+						</tabpanel>
+						<tabpanel>
+							<listbox id="listbox" width="100%">
+								<listhead>
+									<listheader hflex="1" />
+								</listhead>
+								<listitem>
+									<listcell>
+										<checkbox id="boxplotCheckBox"
+											label="Boxplot of the raw data" />
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										<checkbox id="histogramCheckBox"
+											label="Histogram of the raw data" />
+									</listcell>
+								</listitem>
+								<listitem>
+									<listcell>
+										<checkbox
+											id="diagnosticplotCheckBox" label="Diagnostic plots" />
+									</listcell>
+								</listitem>
+							</listbox>
+						</tabpanel>
+					</tabpanels>
+				</tabbox>
+				<space width="10px"/>
+				<vlayout hflex="1">	
+				<separator spacing="30px" />
+				<groupbox id="grpVariableData" mold="3d" width="100%"
+					 style="overflow:auto">
+					<caption label="Data Preview" />
+							<div id="datagrid"  style="overflow:auto"></div>
+				</groupbox>
+				</vlayout>
+			</hlayout>
 			<label value="@bind(vm.resultRServe)" multiline="true" />
+			<button id="btnRunAnalysis" label="Run"
+				onClick="@command('validateMsaInputs')" zclass="btn-success" />
+
+			<button id="btnViewResult" label="View Analysis Result"
+				onClick="@command('showAnalysisResults')" zclass="btn-success"
+				visible="false" />
 		</vlayout>
 	</div>
 </zk>

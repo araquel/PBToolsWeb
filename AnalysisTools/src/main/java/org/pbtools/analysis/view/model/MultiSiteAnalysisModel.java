@@ -1,5 +1,7 @@
 package org.pbtools.analysis.view.model;
 
+import java.util.List;
+
 import org.pbtools.analysis.utilities.AnalysisUtils;
 import org.zkoss.zk.ui.Sessions;
 
@@ -9,7 +11,9 @@ public class MultiSiteAnalysisModel {
 	private static String OUTPUTFOLDER_PATH =  Sessions.getCurrent().getWebApp().getRealPath("resultanalysis")+ System.getProperty("file.separator")+
 			"user2"+ System.getProperty("file.separator")+"Single-Site"+ System.getProperty("file.separator")+"MyResult"+ System.getProperty("file.separator");
 	public static String DATA_PATH = System.getProperty("user.dir")+ System.getProperty("file.separator") + "sample_datasets" + System.getProperty("file.separator");
-	
+
+	private String userAccount;
+
 	private String resultFolderPath;
 	private String outFileName;
 	private String dataFileName;
@@ -44,6 +48,9 @@ public class MultiSiteAnalysisModel {
 	private String contrastEnvFilename;
 	private boolean ammi;
 	private boolean gge;
+	private String analysisResultFolder;
+	private String[] dataHeader;
+	private List<String[]> data;
 	
 	public MultiSiteAnalysisModel() {
 		resultFolderPath = OUTPUTFOLDER_PATH.replace(BSLASH, FSLASH);
@@ -412,4 +419,35 @@ public class MultiSiteAnalysisModel {
 		this.gge = gge;
 	}
 
+	public String getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(String userAccount) {
+		this.userAccount = userAccount;
+	}
+
+	public String getAnalysisResultFolder() {
+		return analysisResultFolder;
+	}
+
+	public void setAnalysisResultFolder(String analysisResultFolder) {
+		this.analysisResultFolder = analysisResultFolder;
+	}
+
+	public String[] getDataHeader() {
+		return dataHeader;
+	}
+
+	public void setDataHeader(String[] dataHeader) {
+		this.dataHeader = dataHeader;
+	}
+
+	public List<String[]> getData() {
+		return data;
+	}
+
+	public void setData(List<String[]> data) {
+		this.data = data;
+	}
 }

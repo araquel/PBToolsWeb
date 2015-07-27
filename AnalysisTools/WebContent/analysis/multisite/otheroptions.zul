@@ -1,5 +1,5 @@
 <div
-	viewModel="@id('vm') @init('org.strasa.web.analysis.multisite.view.model.Specifications')"
+	viewModel="@id('vm') @init('org.pbtools.analysis.multisite.view.model.Specifications')"
 	height="98%">
 
 	<vlayout>
@@ -89,11 +89,11 @@
 		<vbox>
 			<checkbox
 				label="Stability Analysis Using Finlay-Wilkinson Model"
-				id="StabilityFinlayWilkinson" />
+				id="checkBoxStabilityFinlayWilkinson" />
 			<checkbox label="Stability Analysis Using Shukla's Model"
-				id="StabilityShukla" />
-			<checkbox label="AMMI Analysis" id="Ammi" />
-			<checkbox label="GGE Analysis" id="Gge" />
+				id="checkBoxStabilityShukla" />
+			<checkbox label="AMMI Analysis" id="checkBoxAmmi" />
+			<checkbox label="GGE Analysis" id="checkBoxGge" />
 		</vbox>
 		<groupbox hflex="1">
 			<caption>Display:</caption>

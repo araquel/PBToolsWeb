@@ -2,9 +2,7 @@
 	<style src="../css/main.css" />
 	<div id="singleSiteSpecificationsWindow"
 		apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.pbtools.analysis.singlesite.view.model.Specifications')"
-		align="center" height="80%">
-
+		viewModel="@id('vm') @init('org.pbtools.analysis.singlesite.view.model.Specifications')" align="center" height="80%">
 		<vlayout>
 			<grid zclass="none">
 				<columns>
@@ -28,7 +26,6 @@
 													id="uploadCSVbtn" upload="true"
 													label="From External File(.csv)" image="/images/find.png"
 													onUpload="@command('uploadCSV')" />
-
 												<button id="resetBtn"
 													label="Reset" onClick="@global-command('launchSingleSite')"
 													visible="false" zclass="btn-success" />

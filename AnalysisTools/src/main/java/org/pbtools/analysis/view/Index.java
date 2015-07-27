@@ -16,6 +16,7 @@ import org.pbtools.analysis.utilities.AnalysisUtils;
 import org.pbtools.analysis.view.model.MultiSiteAnalysisModel;
 import org.pbtools.analysis.view.model.QTLAnalysisModel;
 import org.pbtools.analysis.view.model.SingleSiteAnalysisModel;
+import org.zkoss.bind.BindUtils;
 //import org.pbtools.analysis.singlesite.view.model.MultiSiteAnalysisModel;
 //import org.pbtools.analysis.singlesite.view.model.QTLAnalysisModel;
 //import org.pbtools.analysis.singlesite.view.model.SingleSiteAnalysisModel;
@@ -31,6 +32,7 @@ import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.bind.annotation.QueryParam;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -40,6 +42,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Include;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -53,35 +56,55 @@ public class Index {
 	private Tab resultTab;
 	private WebServiceManager webServiceManager;
 	private RServeManager rServeManager;
+	
+//	@AfterCompose
+//	public void init(@ContextParam(ContextType.COMPONENT) Component component,
+//			@ContextParam(ContextType.VIEW) Component view){
+//		 Executions.getCurrent().getParameter("paramName");
+//		 
+//		 if()
+//	}
 
-	@AfterCompose
-	public void init(@ContextParam(ContextType.COMPONENT) Component component,
-			@ContextParam(ContextType.VIEW) Component view){
-	}
-
-	@NotifyChange("*")
-	@GlobalCommand("launchSingleSite")
-	public void launchSingleSite(@ContextParam(ContextType.COMPONENT) Component component,
-			@ContextParam(ContextType.VIEW) Component view) {
-		Tabpanel specificationsPanel = (Tabpanel) component.getFellow("specificationsPanel");
-		specificationsPanel.getChildren().get(0).detach();
+		@Init
+		public void init(@QueryParam("analysis") String analysis){
+		try{
+		   if(analysis.equals("multisite")){
+			   BindUtils.postGlobalCommand(null, null, "launchMultiSite", null);
+		   }else BindUtils.postGlobalCommand(null, null, "launchSingleSite", null);
+		}catch(NullPointerException npe){
+			 BindUtils.postGlobalCommand(null, null, "launchSingleSite", null);
+		}
+		}
 		
-		Include specificationPage = new Include();
-		specificationPage.setParent(specificationsPanel);
-		specificationPage.setSrc("/analysis/singlesite/specifications.zul");
-	}
-
-	@NotifyChange("*")
-	@GlobalCommand("launchMultiSite")
-	public void launchMultiSite(@ContextParam(ContextType.COMPONENT) Component component,
-			@ContextParam(ContextType.VIEW) Component view) {
-		Tabpanel specificationsPanel = (Tabpanel) component.getFellow("specificationsPanel");
-		specificationsPanel.getChildren().get(0).detach();
+		@NotifyChange("*")
+		@GlobalCommand("launchSingleSite")
+		public void launchSingleSite(@ContextParam(ContextType.COMPONENT) Component component,
+				@ContextParam(ContextType.VIEW) Component view) {
+			Label tabLabel = (Label) component.getFellow("tabLabel");
+			tabLabel.setValue("Single-site Analysis");
+			Tabpanel specificationsPanel = (Tabpanel) component.getFellow("specificationsPanel");
+			specificationsPanel.getChildren().get(0).detach();
+			
+			Include specificationPage = new Include();
+			specificationPage.setParent(specificationsPanel);
+			specificationPage.setSrc("/analysis/singlesite/specifications.zul");
+		}
+	
+		@NotifyChange("*")
+		@GlobalCommand("launchMultiSite")
+		public void launchMultiSite(@ContextParam(ContextType.COMPONENT) Component component,
+				@ContextParam(ContextType.VIEW) Component view) {
+			Label tabLabel = (Label) component.getFellow("tabLabel");
+			tabLabel.setValue("Multi-site Analysis");
+			Tabpanel specificationsPanel = (Tabpanel) component.getFellow("specificationsPanel");
+			specificationsPanel.getChildren().get(0).detach();
+			
+			Include specificationPage = new Include();
+			specificationPage.setParent(specificationsPanel);
+			specificationPage.setSrc("/analysis/multisite/specifications.zul");
+			tabLabel.setValue("Multi-site Analysis");
+		}
 		
-		Include specificationPage = new Include();
-		specificationPage.setParent(specificationsPanel);
-		specificationPage.setSrc("/analysis/multisite/specifications.zul");
-	}
 	
 	@NotifyChange("*")
 	@GlobalCommand("launchQTL")
@@ -120,7 +143,7 @@ public class Index {
 		
 		newTab.setSelected(true); 
 	}
-	
+
 	@GlobalCommand("displayMsaResult")
 	@NotifyChange("*")
 	public void displayMsaResult(@ContextParam(ContextType.COMPONENT) Component component,

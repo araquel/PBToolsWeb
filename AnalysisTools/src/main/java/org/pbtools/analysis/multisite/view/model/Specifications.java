@@ -194,8 +194,10 @@ public class Specifications {
 	private File uploadedFile;
 	private UserFileManager userFileManager;
 	private ListModelList<String> controlsModel;
+
 	private Listbox genotypeLevelsLb;
 	private ListModelList<String> genotypeLevelsModel;
+
 	private boolean genotypeControlsOpen = false;
 	private Include includeOtherOptions;
 	private RServeManager rServeManager;
@@ -579,9 +581,9 @@ public class Specifications {
 			factorModel= AnalysisUtils.getFactorsAsListModel(varInfo);
 			responseModel = new ListModelList<String>();
 
-			numericLb.setModel(numericModel);
-			factorLb.setModel(factorModel);
-			responseLb.setModel(responseModel);
+//			numericLb.setModel(numericModel);
+//			factorLb.setModel(factorModel);
+//			responseLb.setModel(responseModel);
 		}catch(NullPointerException npe){
 			resetListBoxes();
 		}
@@ -593,9 +595,9 @@ public class Specifications {
 		factorModel= null;
 		responseModel = null;
 
-		numericLb.setModel(numericModel);
-		factorLb.setModel(factorModel);
-		responseLb.setModel(responseModel);
+//		numericLb.setModel(numericModel);
+//		factorLb.setModel(factorModel);
+//		responseLb.setModel(responseModel);
 
 		envTextBox.setText("");
 		genotypeTextBox.setText("");
@@ -1025,7 +1027,7 @@ public class Specifications {
 				rServeManager = new RServeManager();
 				genotypeLevels = rServeManager.getLevels(columnList, dataList, genotypeTextBox.getValue());
 				genotypeLevelsModel = AnalysisUtils.toListModelList(genotypeLevels);
-				genotypeLevelsLb.setModel(genotypeLevelsModel);
+//				genotypeLevelsLb.setModel(genotypeLevelsModel);
 				if(genotypeLevels.length>15){
 					performAllPairwiseBtn.setDisabled(true);
 					performAllPairwiseBtn.setChecked(false);
@@ -1038,8 +1040,8 @@ public class Specifications {
 		}else if(!varTextBox.getValue().isEmpty()){
 			if(varTextBox.getId().equals("genotypeTextBox")){ //clear listboxes related to genotypic levels
 				genotypeLevelsModel = new ListModelList<String>();
-				genotypeLevelsLb.setModel(genotypeLevelsModel);
-				controlsLb.setModel(genotypeLevelsModel);
+//				genotypeLevelsLb.setModel(genotypeLevelsModel);
+//				controlsLb.setModel(genotypeLevelsModel);
 			}
 			factorModel.add(varTextBox.getValue());
 			varTextBox.setValue(null);
@@ -1234,6 +1236,46 @@ public class Specifications {
 	//		this.studyDataSets = studyDataSets;
 	//	}
 
+
+	public ListModelList<String> getNumericModel() {
+		return numericModel;
+	}
+
+	public void setNumericModel(ListModelList<String> numericModel) {
+		this.numericModel = numericModel;
+	}
+
+	public ListModelList<String> getResponseModel() {
+		return responseModel;
+	}
+
+	public void setResponseModel(ListModelList<String> responseModel) {
+		this.responseModel = responseModel;
+	}
+
+	public ListModelList<String> getFactorModel() {
+		return factorModel;
+	}
+
+	public void setFactorModel(ListModelList<String> factorModel) {
+		this.factorModel = factorModel;
+	}
+
+	public ListModelList<String> getGenotypeLevelsModel() {
+		return genotypeLevelsModel;
+	}
+
+	public void setGenotypeLevelsModel(ListModelList<String> genotypeLevelsModel) {
+		this.genotypeLevelsModel = genotypeLevelsModel;
+	}
+
+	public ListModelList<String> getControlsModel() {
+		return controlsModel;
+	}
+
+	public void setControlsModel(ListModelList<String> controlsModel) {
+		this.controlsModel = controlsModel;
+	}
 	public void setActivePage(int activePage) {
 		System.out.println("pageSize");
 		reloadCsvGrid();

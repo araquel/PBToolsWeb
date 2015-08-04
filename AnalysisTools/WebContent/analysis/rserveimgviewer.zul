@@ -1,0 +1,10 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+
+	<window border="none" hflex="1" vflex="1" position="center">
+		<vlayout>
+		<zk if="${arg.height=='800px'}"><label value="${arg.imageName}" /></zk>
+			
+			<image src="${arg.imageName}" height="${arg.height}"
+				width="${arg.width}" />
+		</vlayout>
+	</window>

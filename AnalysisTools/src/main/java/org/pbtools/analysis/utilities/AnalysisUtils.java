@@ -35,8 +35,8 @@ public class AnalysisUtils {
 	private static final String FILE_SEPARATOR  = System.getProperty("file.separator");
 //	public static final String WEB_SERVICE_ADDRESS  = "http://54.86.161.210:8080/"; // no result at all
 //	public static final String WEB_SERVICE_ADDRESS  = "http://172.31.45.231:8080/"; // connection times out
-//	public static final String WEB_SERVICE_ADDRESS  = "http://172.29.4.166:8080";  //Sir Alex
-	public static final String WEB_SERVICE_ADDRESS  = "http://172.31.8.153:8080"; // "http://52.74.63.249:8080";//  //jack 172.31.8.153 //http://52.74.63.249:8080/
+	public static final String WEB_SERVICE_ADDRESS  = "http://172.29.4.166:8080";  //Sir Alex
+//	public static final String WEB_SERVICE_ADDRESS  = "http://172.31.8.153:8080"; // "http://52.74.63.249:8080";//  //jack 172.31.8.153 //http://52.74.63.249:8080/
 //	public static final String WEB_SERVICE_ADDRESS  = "http://localhost:8080"; //"http://172.29.4.166:8080";
 
 	public static void disableRow(Row row, ListModelList<String> factorModel) {

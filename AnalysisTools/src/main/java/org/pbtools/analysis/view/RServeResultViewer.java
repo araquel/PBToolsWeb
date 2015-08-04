@@ -55,7 +55,7 @@ import com.google.gson.JsonSyntaxException;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class ResultViewer {
+public class RServeResultViewer {
 	String textFileContent = null;
 	private AMedia fileContent;
 	private File tempFile;
@@ -63,7 +63,7 @@ public class ResultViewer {
 	private static final String IMAGE_THUMBNAIL_WIDTH = "150px";
 	private static String RESULT_ANALYSIS_PATH;
 	
-//Viewer for webservice
+/*//Viewer for webservice
 	@AfterCompose 
 	public void init(@ContextParam(ContextType.COMPONENT) final Component component,
 			@ContextParam(ContextType.VIEW) Component view, @ExecutionArgParam("outputFolderPath") String outputFolderPath, @ExecutionArgParam("fileNames") String[] files){
@@ -239,8 +239,8 @@ public class ResultViewer {
 		Tabbox tabBox = (Tabbox) component.getFellow("tabBox");
 		tabBox.setSelectedIndex(0);
 	}
-
-/*	
+*/
+	
 	
 	@AfterCompose
 	public void init(@ContextParam(ContextType.COMPONENT) final Component component,
@@ -302,7 +302,7 @@ public class ResultViewer {
 					studyInformationPage.setDynamicProperty("height", IMAGE_THUMBNAIL_HEIGHT);
 					studyInformationPage.setDynamicProperty("width", IMAGE_THUMBNAIL_WIDTH);
 					studyInformationPage.setDynamicProperty("imageName", path.replaceAll("\\\\", "//"));
-					studyInformationPage.setSrc("/analysis/imgviewer.zul");
+					studyInformationPage.setSrc("/analysis/rserveimgviewer.zul");
 					studyInformationPage.setParent(newGroupBox);
 					System.out.println("imgPath "+path);
 					div.appendChild(newGroupBox);
@@ -357,50 +357,51 @@ public class ResultViewer {
 					}
 					//					treeTabs.appendChild(newTab);
 				}
-				if(file.endsWith("(dataset).csv")){
-					System.out.println("display image:" + outputFolderPath+file);
-					Tabpanel tabPanel = (Tabpanel) component.getFellow("dataSetTab");
-
-					Groupbox newGroupBox = new Groupbox();
-					newGroupBox.setTitle(file.replaceAll(".csv", ""));
-					newGroupBox.setMold("3d");
-					newGroupBox.setHeight("500px");
-					String path = outputFolderPath+file;
-					File fileToCreate = new File(path);
-
-					byte[] buffer = new byte[(int) fileToCreate.length()];
-					FileInputStream fs;
-					try {
-						fs = new FileInputStream(fileToCreate);
-						fs.read(buffer);
-						fs.close();
-						tempFile = File.createTempFile("csvdata", ".tmp");
-						ByteArrayInputStream is = new ByteArrayInputStream(buffer);
-						fileContent = new AMedia("report", "text", "text/plain", is);
-						InputStream in = fileContent.isBinary() ? fileContent.getStreamData() : new ReaderInputStream(fileContent.getReaderData());
-						FileUtilities.uploadFile(tempFile.getAbsolutePath(), in);
-
-						CSVReader reader = new CSVReader(new FileReader(tempFile.getAbsolutePath()));
-						Include studyInformationPage = new Include();
-						studyInformationPage.setDynamicProperty("csvReader", reader);
-						studyInformationPage.setDynamicProperty("name", file.replaceAll(".csv", ""));
-						studyInformationPage.setSrc("/analysis/csvviewer.zul");
-
-						studyInformationPage.setParent(newGroupBox);
-						tabPanel.appendChild(newGroupBox);
-
-						Separator sep = new Separator();
-						sep.setHeight("20px");
-						tabPanel.appendChild(sep);
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					//					treeTabs.appendChild(newTab);
-				}
+				
+//				if(file.endsWith("(dataset).csv")){
+//					System.out.println("display image:" + outputFolderPath+file);
+//					Tabpanel tabPanel = (Tabpanel) component.getFellow("dataSetTab");
+//
+//					Groupbox newGroupBox = new Groupbox();
+//					newGroupBox.setTitle(file.replaceAll(".csv", ""));
+//					newGroupBox.setMold("3d");
+//					newGroupBox.setHeight("500px");
+//					String path = outputFolderPath+file;
+//					File fileToCreate = new File(path);
+//
+//					byte[] buffer = new byte[(int) fileToCreate.length()];
+//					FileInputStream fs;
+//					try {
+//						fs = new FileInputStream(fileToCreate);
+//						fs.read(buffer);
+//						fs.close();
+//						tempFile = File.createTempFile("csvdata", ".tmp");
+//						ByteArrayInputStream is = new ByteArrayInputStream(buffer);
+//						fileContent = new AMedia("report", "text", "text/plain", is);
+//						InputStream in = fileContent.isBinary() ? fileContent.getStreamData() : new ReaderInputStream(fileContent.getReaderData());
+//						FileUtilities.uploadFile(tempFile.getAbsolutePath(), in);
+//
+//						CSVReader reader = new CSVReader(new FileReader(tempFile.getAbsolutePath()));
+//						Include studyInformationPage = new Include();
+//						studyInformationPage.setDynamicProperty("csvReader", reader);
+//						studyInformationPage.setDynamicProperty("name", file.replaceAll(".csv", ""));
+//						studyInformationPage.setSrc("/analysis/csvviewer.zul");
+//
+//						studyInformationPage.setParent(newGroupBox);
+//						tabPanel.appendChild(newGroupBox);
+//
+//						Separator sep = new Separator();
+//						sep.setHeight("20px");
+//						tabPanel.appendChild(sep);
+//					} catch (FileNotFoundException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					//					treeTabs.appendChild(newTab);
+//				}
 			}
 		}
 		String s = sb.toString();
@@ -427,7 +428,7 @@ public class ResultViewer {
 		
 	}
 	
-	*/
+	
 	protected void zoomImage(String dynamicProperty, Component component) {
 		// TODO Auto-generated method stub
 		Div div = (Div) component.getFellow("zoomDiv");

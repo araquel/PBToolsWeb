@@ -1,6 +1,6 @@
 <vlayout style="padding:10px">
 	<hbox>
-		<listbox id="numericLb" hflex="1" rows="4" checkmark="true"
+		<listbox id="numericLb" model="@bind(vm.numericModel)" hflex="1" rows="4" checkmark="true"
 			multiple="true">
 			<listhead>
 				<listheader label="Numeric Variables" />
@@ -26,7 +26,7 @@
 
 		<space width="10px"></space>
 
-		<listbox id="responseLb" hflex="1" multiple="true" rows="4"
+		<listbox id="responseLb" model="@bind(vm.responseModel)" hflex="1" multiple="true" rows="4"
 			checkmark="true">
 			<listhead>
 				<listheader label="Response Variable" />
@@ -48,7 +48,7 @@
 			onClick="@global-command('toFactor')" />
 	</hbox>
 	<hbox>
-		<listbox id="factorLb" vflex="1" hflex="1" rows="10"
+		<listbox id="factorLb" model="@bind(vm.factorModel)" vflex="1" hflex="1" rows="10"
 			checkmark="true" width="300px" height="300px">
 			<listhead>
 				<listheader label="Factor Variables" />

@@ -187,11 +187,13 @@ public class Specifications {
 	private File uploadedFile;
 	private UserFileManager userFileManager;
 	private ListModelList<String> controlsModel;
+
 	private Listbox genotypeLevelsLb;
 	private ListModelList<String> genotypeLevelsModel;
 	private boolean genotypeControlsOpen = false;
 	private Include includeOtherOptions;
 	private RServeManager rServeManager;
+	private FileResourceModel jsonField;
 
 	@AfterCompose
 	public void init(@ContextParam(ContextType.COMPONENT) Component component,
@@ -266,7 +268,7 @@ public class Specifications {
 		fieldRowComboBox = (Combobox) component.getFellow("fieldRowComboBox");
 		fieldColumnComboBox = (Combobox) component.getFellow("fieldColumnComboBox");
 		comboboxDesign =  (Combobox) component.getFellow("comboboxDesign");
-//		comboboxDesign.setModel(getTypeOfDesignList());
+		//		comboboxDesign.setModel(getTypeOfDesignList());
 		//wire Other Options UI
 
 		includeOtherOptions =(Include) component.getFellow("includeOtherOptions");
@@ -307,7 +309,7 @@ public class Specifications {
 	}
 
 	@GlobalCommand("updateFixedOptions")
-//	@NotifyChange("*")
+	//	@NotifyChange("*")
 	public void updateFixedOptions(@BindingParam("selected") Boolean selected){
 		System.out.println("activate Fixed");
 		if(selected){//if checked
@@ -357,7 +359,7 @@ public class Specifications {
 	//	}
 
 	@GlobalCommand("updateRandomOptions")
-//	@NotifyChange("*")
+	//	@NotifyChange("*")
 	public void updateRandomOptions(@BindingParam("selected") Boolean selected){
 		System.out.println("activate Random");
 		if(selected){//if checked
@@ -389,7 +391,7 @@ public class Specifications {
 	}
 
 	@Command("updatePairwiseOptions")
-//	@NotifyChange("*")
+	//	@NotifyChange("*")
 	public void updatePairwiseOptions(@BindingParam("selected") Boolean state) {
 		// TODO Auto-generated method stub
 		if(performPairwiseCheckBox.isChecked() && state) groupPerformPairwise.setOpen(true);
@@ -419,13 +421,13 @@ public class Specifications {
 			Messagebox.show("You can't have the same row and column variable", "Error", Messagebox.OK, Messagebox.ERROR);
 		}	
 	}
-	
+
 	@Command("updateVariableList")
 	@NotifyChange("factorModel")
 	public void updateVariableList(@BindingParam("selectedIndex") Integer selectedIndex){
 		selectedDesign = selectedIndex;
 		ssaModel.setDesign(selectedIndex);
-//		System.out.println("chose " + Integer.toString(selectedIndex));
+		//		System.out.println("chose " + Integer.toString(selectedIndex));
 		switch (selectedIndex) {
 		case 1: {//AugmentedRCB
 			enableAugmentedOptions(true);
@@ -568,9 +570,9 @@ public class Specifications {
 			factorModel= AnalysisUtils.getFactorsAsListModel(varInfo);
 			responseModel = new ListModelList<String>();
 
-			numericLb.setModel(numericModel);
-			factorLb.setModel(factorModel);
-			responseLb.setModel(responseModel);
+//			numericLb.setModel(numericModel);
+//			factorLb.setModel(factorModel);
+//			responseLb.setModel(responseModel);
 		}catch(NullPointerException npe){
 			resetListBoxes();
 		}
@@ -582,9 +584,9 @@ public class Specifications {
 		factorModel= null;
 		responseModel = null;
 
-		numericLb.setModel(numericModel);
-		factorLb.setModel(factorModel);
-		responseLb.setModel(responseModel);
+//		numericLb.setModel(numericModel);
+//		factorLb.setModel(factorModel);
+//		responseLb.setModel(responseModel);
 
 		envTextBox.setText("");
 		genotypeTextBox.setText("");
@@ -785,51 +787,78 @@ public class Specifications {
 	public void validateSsaInputs() {
 		// TODO Auto-generated method stub
 		//		try{
+		errorMessage="Analysis didn't run successfully.";
+		
 		if(validateSsaModel()){
-			System.out.println("pasing variables");
+//			System.out.println("pasing variables");
 			webServiceManager = new WebServiceManager();
 			btnRunAnalysis.setVisible(false);
-			btnViewResult.setVisible(true);
 			webServiceManager.doSingleEnvironmentAnalysis(ssaModel);
 			setResultRServe(ssaModel.getAnalysisResultFolder());
-		} else Messagebox.show(errorMessage);
-	}
-	
-	@Command()
-	public void showAnalysisResults() {
-		// TODO Auto-generated method stub
-		errorMessage="Analysis is still running";
-		FileResourceModel jsonField=new FileResourceModel();
-
-		Client c = ClientBuilder.newClient();
-		try{
-			WebTarget target= c.target(ssaModel.getResultFolderPath());
-			Response response = target.request().get();
-			String json = response.readEntity(String.class); 
-			if(json.length() > 0){
+			
+			try{
+				jsonField=new FileResourceModel();
+				Client c = ClientBuilder.newClient();
+				WebTarget target= c.target(ssaModel.getResultFolderPath());
+				Response response = target.request().get();
+				String json = response.readEntity(String.class); 
+						
+				
+				while(!(json.length() > 0))
+				{
+					try {
+						response = target.request().get();
+						json = response.readEntity(String.class);
+						Thread.sleep(10000);
+						
+					}
+					catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					catch(NullPointerException npe){
+						Messagebox.show(errorMessage);
+					}
+				}
+				
 				Gson jsonInput= new Gson();
 				jsonField=jsonInput.fromJson(json,FileResourceModel.class);
 				System.out.println("accessFolder: "+ jsonField.getFolderResource());
 				System.out.println("sampleFile: "+ jsonField.getFileListResource()[0]);
+				
+//				btnViewResult.setVisible(true);
+				
 				Map<String,Object> args = new HashMap<String,Object>();
 				args.put("ssaModel", ssaModel);
 				args.put("fileNames", jsonField.getFileListResource());
 				BindUtils.postGlobalCommand(null, null, "displaySsaResult", args);
-			} else Messagebox.show(errorMessage);
+				
+			}catch(JsonSyntaxException e2) {
+				// TODO Auto-generated catch block
+				Messagebox.show(errorMessage+ " (JasonSyntaxException)");
+			}catch(IllegalStateException e3) {
+				// TODO Auto-generated catch block
+				Messagebox.show(errorMessage+ " (IllegalSyntaxException)");
+			}catch(ProcessingException e4) {
+				// TODO Auto-generated catch block
+				Messagebox.show("Cannot connect to the webservice. Please contact your administrator.");
+			}
+		} else Messagebox.show(errorMessage);
+	}
 
-		}catch(NullPointerException npe){
-			Messagebox.show(errorMessage);
-		}catch(JsonSyntaxException e2) {
-			// TODO Auto-generated catch block
-			Messagebox.show(errorMessage);
-		}catch(IllegalStateException e3) {
-			// TODO Auto-generated catch block
-			Messagebox.show(errorMessage);
-		}
-//		catch(ProcessingException pe){x
-//			errorMessage="Cannot connect to the web service. Please contact your administrator.";
-//			Messagebox.show(errorMessage);
-//		}
+	@Command()
+	public void showAnalysisResults() {
+		// TODO Auto-generated method stub
+		//		errorMessage="Analysis is still running";
+
+		Map<String,Object> args = new HashMap<String,Object>();
+		args.put("ssaModel", ssaModel);
+		args.put("fileNames", jsonField.getFileListResource());
+		BindUtils.postGlobalCommand(null, null, "displaySsaResult", args);
+		//		catch(ProcessingException pe){x
+		//			errorMessage="Cannot connect to the web service. Please contact your administrator.";
+		//			Messagebox.show(errorMessage);
+		//		}
 	}
 
 	private void setOutputPaths(){
@@ -845,8 +874,8 @@ public class Specifications {
 		setOutputPaths();
 
 		try{
-//			String filePath = userFileManager.moveUploadedFileToOutputFolder(AnalysisUtils.createOutputFolder(fileName.replaceAll(" ", ""), "ssa"), fileName.replaceAll(" ", ""), uploadedFile);
-//			ssaModel.setDataFileName(filePath.replace("\\", "/"));
+			//			String filePath = userFileManager.moveUploadedFileToOutputFolder(AnalysisUtils.createOutputFolder(fileName.replaceAll(" ", ""), "ssa"), fileName.replaceAll(" ", ""), uploadedFile);
+			//			ssaModel.setDataFileName(filePath.replace("\\", "/"));
 			ssaModel.setOutFileName(ssaModel.getResultFolderPath()+ "SEA_output.txt");
 
 			//set Vars
@@ -1008,7 +1037,7 @@ public class Specifications {
 				rServeManager = new RServeManager();
 				genotypeLevels = rServeManager.getLevels(columnList, dataList, genotypeTextBox.getValue());
 				genotypeLevelsModel = AnalysisUtils.toListModelList(genotypeLevels);
-				genotypeLevelsLb.setModel(genotypeLevelsModel);
+//				genotypeLevelsLb.setModel(genotypeLevelsModel);
 				if(genotypeLevels.length>15){
 					performAllPairwiseBtn.setDisabled(true);
 					performAllPairwiseBtn.setChecked(false);
@@ -1021,8 +1050,8 @@ public class Specifications {
 		}else if(!varTextBox.getValue().isEmpty()){
 			if(varTextBox.getId().equals("genotypeTextBox")){ //clear listboxes related to genotypic levels
 				genotypeLevelsModel = new ListModelList<String>();
-				genotypeLevelsLb.setModel(genotypeLevelsModel);
-				controlsLb.setModel(genotypeLevelsModel);
+//				genotypeLevelsLb.setModel(genotypeLevelsModel);
+//				controlsLb.setModel(genotypeLevelsModel);
 			}
 			factorModel.add(varTextBox.getValue());
 			varTextBox.setValue(null);
@@ -1076,6 +1105,45 @@ public class Specifications {
 			numericModel.add(selectedItem);
 			responseModel.remove(selectedItem);
 		}
+	}
+
+	public ListModelList<String> getNumericModel() {
+		return numericModel;
+	}
+
+	public void setNumericModel(ListModelList<String> numericModel) {
+		this.numericModel = numericModel;
+	}
+
+	public ListModelList<String> getResponseModel() {
+		return responseModel;
+	}
+
+	public void setResponseModel(ListModelList<String> responseModel) {
+		this.responseModel = responseModel;
+	}
+
+	public ListModelList<String> getFactorModel() {
+		return factorModel;
+	}
+
+	public void setFactorModel(ListModelList<String> factorModel) {
+		this.factorModel = factorModel;
+	}
+	public ListModelList<String> getControlsModel() {
+		return controlsModel;
+	}
+
+	public void setControlsModel(ListModelList<String> controlsModel) {
+		this.controlsModel = controlsModel;
+	}
+
+	public ListModelList<String> getGenotypeLevelsModel() {
+		return genotypeLevelsModel;
+	}
+
+	public void setGenotypeLevelsModel(ListModelList<String> genotypeLevelsModel) {
+		this.genotypeLevelsModel = genotypeLevelsModel;
 	}
 
 	public SingleSiteAnalysisModel getSsaModel() {

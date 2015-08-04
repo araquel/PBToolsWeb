@@ -1,7 +1,7 @@
 <vlayout style="padding:10px">
 	<hbox>
-			<listbox id="numericLb" hflex="1" rows="4"  width="300px"
-				checkmark="true" multiple="true">
+			<listbox id="numericLb" model="@bind(vm.numericModel)" hflex="1" rows="4"  width="300px"
+				checkmark="true">
 				<listhead>
 					<listheader label="Numeric Variables" />
 				</listhead>
@@ -24,7 +24,7 @@
 				onClick="@global-command('removeResponse')" />
 		</vlayout>
 		<space width="10px"></space>
-		<listbox id="responseLb" hflex="1" multiple="true" rows="4" checkmark="true"  width="300px"> 
+		<listbox id="responseLb"  model="@bind(vm.responseModel)" hflex="1" rows="4" checkmark="true"  width="300px"> 
 			<listhead>
 				<listheader label="Response Variable" />
 			</listhead>
@@ -44,7 +44,7 @@
 			onClick="@global-command('toFactor')" />
 	</hbox>
 	<hbox>
-		<listbox id="factorLb" hflex="1" rows="10" checkmark="true" width="300px">
+		<listbox id="factorLb"  model="@bind(vm.factorModel)" hflex="1" rows="10" checkmark="true" width="300px">
 			<listhead>
 				<listheader label="Factor Variables" />
 			</listhead>

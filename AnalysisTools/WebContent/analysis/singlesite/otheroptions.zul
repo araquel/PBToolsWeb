@@ -51,7 +51,7 @@
 			open="@bind(vm.genotypeControlsOpen)" onClick="@command('checkIfControlLevelsNeeded')">
 			<caption>Specify control(s):</caption>
 			<hbox>
-				<listbox id="genotypeLevelsLb" hflex="1" rows="4"  checkmark="true"
+				<listbox id="genotypeLevelsLb" model="@bind(vm.genotypeLevelsModel)"  hflex="1" rows="4"  checkmark="true"
 					width="300px">
 					<listhead>
 						<listheader label="Levels of Genotype:" />
@@ -72,7 +72,7 @@
 					tooltip="Remove Control variable" align="center"
 					onClick="@global-command('moveListItem', fromList=controlsLb, toList=genotypeLevelsLb)" />
 				<space width="10px"></space>
-				<listbox id="controlsLb" hflex="1" rows="4"  checkmark="true"
+				<listbox id="controlsLb" model="@bind(vm.controlsModel)"  hflex="1" rows="4"  checkmark="true"
 					width="300px">
 					<listhead>
 						<listheader label="Control(s):" />

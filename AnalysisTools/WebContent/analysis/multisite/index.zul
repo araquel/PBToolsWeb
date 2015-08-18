@@ -2,7 +2,47 @@
 <?link href="/theme/css/fonts.css" rel="stylesheet" type="text/css"?>
 <?link href="/theme/less/index.css.dsp" rel="stylesheet" type="text/css"?>
 <?link href="/theme/css/main.css" rel="stylesheet" type="text/css"?>
+
 <zk>
+
+<script type="text/javascript">
+		zk.afterLoad("zk", function () {
+			var oldProgressbox = zUtl.progressbox;
+			zUtl.progressbox = function () {
+				oldProgressbox.apply(this, arguments);
+				var $mask = jq('.z-loading');
+				if ($mask) {
+					var $img = jq('.z-loading-indicator'),
+						$body = jq(document.body),
+						body = $body[0],
+						bw = $body.width() + body.scrollLeft - 10,
+						bh = $body.height() + body.scrollTop - 10;
+
+					// update mask and image's style
+					$mask.width(bw);
+					$mask.height(bh);
+
+					$img.width('150px');
+					$mask.css('opacity', .60);
+					$img.css('margin-left', (bw - $img.width()) / 2 + 'px');
+					$img.css('margin-top', (bh - $img.height()) / 2 + 'px');
+
+					// update mask size when window scroll
+					if (!window.eventBinded) {
+						var $win = jq(window);
+						$win.scroll(function () {
+							var $maskInst = jq('.z-loading');
+							if ($maskInst[0]) {
+								$maskInst.width(bw + $win.scrollLeft());
+								$maskInst.height(bh + $win.scrollTop());
+							}
+						});
+						window.eventBinded = true;
+					}
+				}
+			}
+		});
+	</script>
 	<div id="mainSingleSiteWindow" apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')">
 <!-- 		<div sclass="page-header"> -->

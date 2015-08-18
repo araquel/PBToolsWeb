@@ -5,6 +5,9 @@
 
 <zk>
 
+
+
+
 <script type="text/javascript">
 		zk.afterLoad("zk", function () {
 			var oldProgressbox = zUtl.progressbox;
@@ -45,17 +48,17 @@
 	</script>
 	<div id="mainSingleSiteWindow" apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')">
-		<!-- 		<div sclass="page-header" /> -->
-<!-- 		<label id="tabLabel" value="Single-site Analysis" /> -->
-		<tabbox id="tabBox" sclass="page-content">
+<!-- 		<div sclass="page-header"> -->
+<!-- 			<label id="tabLabel" value="Single-site Analysis" /> -->
+<!-- 		</div> -->
+		 	<tabbox id="tabBox" sclass="page-content" height="1000px">
 			<tabs id="tabs">
-				<tab label="Single-site Analysis" />
+				<tab label="Single-site Analysis"
+					image="/images/find.png" />
 			</tabs>
 			<tabpanels id="tabPanels">
-				<tabpanel id="specificationsPanel"
-					style="overflow:auto">
-					<include id="includeSpecifications"
-						src="/analysis/singlesite/specifications.zul" />
+				<tabpanel id="specificationsPanel">
+					<include id="includeSpecifications" src="specifications.zul" />
 				</tabpanel>
 			</tabpanels>
 		</tabbox>

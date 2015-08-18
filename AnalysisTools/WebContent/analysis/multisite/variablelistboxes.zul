@@ -18,10 +18,10 @@
 			<separator height="100px"></separator>
 			<image style="cursor:pointer" id="chooseResponseBtn"
 				src="/images/rightarrow_g.png" tooltip="Add response variable"
-				onClick="@global-command('addResponse')" />
+				onClick="@command('addResponse')" />
 			<image style="cursor:pointer" id="removeResponseBtn"
 				src="/images/leftarrow_g.png" tooltip="Remove response variable"
-				onClick="@global-command('removeResponse')" />
+				onClick="@command('removeResponse')" />
 		</vlayout>
 		<space width="10px"></space>
 		<listbox id="responseLb"  model="@bind(vm.responseModel)" hflex="1" rows="4" checkmark="true"  width="300px"> 
@@ -38,10 +38,10 @@
 	<hbox spacing="10px" width="24px">
 		<image style="cursor:pointer" id="toNumericBtn"
 			tooltip="set as Numeric" src="/images/uparrow_g.png"
-			onClick="@global-command('toNumeric')" />
+			onClick="@command('toNumeric')" />
 		<image style="cursor:pointer" id="toFactorBtn"
 			src="/images/downarrow_g.png" tooltip="set as Factor"
-			onClick="@global-command('toFactor')" />
+			onClick="@command('toFactor')" />
 	</hbox>
 	<hbox>
 		<listbox id="factorLb"  model="@bind(vm.factorModel)" hflex="1" rows="10" checkmark="true" width="300px">
@@ -66,7 +66,7 @@
 					<cell>
 						<image style="cursor:pointer;padding:10px" id="addEnvButton"
 							src="/images/rightarrow_g.png" tooltip="Add Environment variable"
-							onClick="@global-command('chooseVariable', varTextBox=envTextBox, imgButton=self)" />
+							onClick="@command('chooseVariable', varTextBox=envTextBox, imgButton=self)" />
 						Environment:
 					</cell>
 					<hlayout>
@@ -81,7 +81,7 @@
 						<image style="cursor:pointer;padding:10px"
 							id="addGenotypeButton" src="/images/rightarrow_g.png"
 							tooltip="Add Genotype variable"
-							onClick="@global-command('chooseVariable', varTextBox=genotypeTextBox, imgButton=self)" />
+							onClick="@command('chooseVariable', varTextBox=genotypeTextBox, imgButton=self)" />
 						Genotype:
 					</cell>
 					<hlayout>
@@ -111,7 +111,7 @@
 						<image style="cursor:pointer;padding:10px"
 							id="addBlockButton" src="/images/rightarrow_g.png"
 							tooltip="Add Block variable"
-							onClick="@global-command('chooseVariable', varTextBox=blockTextBox, imgButton=self)" />
+							onClick="@command('chooseVariable', varTextBox=blockTextBox, imgButton=self)" />
 						Block:
 					</cell>
 					<hlayout>
@@ -124,7 +124,7 @@
 						<image style="cursor:pointer"
 							id="addReplicateButton" src="/images/rightarrow_g.png"
 							tooltip="Add Replicate variable"
-							onClick="@global-command('chooseVariable', varTextBox=replicateTextBox, imgButton=self)" />
+							onClick="@command('chooseVariable', varTextBox=replicateTextBox, imgButton=self)" />
 						Replicate:
 					</cell>
 					<hlayout>
@@ -136,7 +136,7 @@
 					<cell>
 						<image style="cursor:pointer;padding:10px" id="addRowButton"
 							src="/images/rightarrow_g.png" tooltip="Add Row variable"
-							onClick="@global-command('chooseVariable', varTextBox=rowTextBox, imgButton=self)" />
+							onClick="@command('chooseVariable', varTextBox=rowTextBox, imgButton=self)" />
 						Row:
 					</cell>
 					<hlayout>
@@ -149,7 +149,7 @@
 						<image style="cursor:pointer;padding:10px"
 							id="addColumnButton" src="/images/rightarrow_g.png"
 							tooltip="Add Column variable"
-							onClick="@global-command('chooseVariable', varTextBox=columnTextBox, imgButton=self)" />
+							onClick="@command('chooseVariable', varTextBox=columnTextBox, imgButton=self)" />
 						Column:
 					</cell>
 					<hlayout>

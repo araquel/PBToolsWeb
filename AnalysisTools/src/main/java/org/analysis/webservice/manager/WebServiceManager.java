@@ -126,7 +126,34 @@ public class WebServiceManager {
 			e.printStackTrace();
 		}
 	}
+	
+	public void doMultiEnvironmentAnalysis(MultiSiteAnalysisModel msaModel) {
+		try{
+			Gson gson = new Gson();
+			String json = gson.toJson(msaModel);
+			
+			System.out.println(json);
 
+			Client c = ClientBuilder.newClient();
+			WebTarget target= c.target(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/MultiTrial/analyze");
+//			WebTarget target= c.target(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/SingleTrial/run");
+//			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/analyze");
+			Response response = target.request().post(Entity.json(json));
+
+			if (response.getStatus() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ response.getStatus());
+			}
+
+			String output = response.getEntity().toString();
+			System.out.println("Server response .... \n");
+			System.out.println(response.readEntity(String.class));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	}
+	
 //	public void getFilesFromWS(String outputFolderPath) {
 //
 //		try{

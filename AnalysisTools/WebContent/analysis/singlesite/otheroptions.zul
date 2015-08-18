@@ -66,11 +66,11 @@
 				<image style="cursor:pointer"
 					id="addGenotypeControlsButton" src="/images/rightarrow_g.png"
 					tooltip="Add Control variable" align="center"
-					onClick="@global-command('moveListItem', fromList=genotypeLevelsLb, toList=controlsLb)" />
+					onClick="@command('moveListItem', fromList=genotypeLevelsLb, toList=controlsLb)" />
 				<image style="cursor:pointer"
 					id="removeGenotypeControlsButton" src="/images/leftarrow_g.png"
 					tooltip="Remove Control variable" align="center"
-					onClick="@global-command('moveListItem', fromList=controlsLb, toList=genotypeLevelsLb)" />
+					onClick="@command('moveListItem', fromList=controlsLb, toList=genotypeLevelsLb)" />
 				<space width="10px"></space>
 				<listbox id="controlsLb" model="@bind(vm.controlsModel)"  hflex="1" rows="4"  checkmark="true"
 					width="300px">

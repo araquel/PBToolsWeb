@@ -79,7 +79,8 @@ public class Specifications {
 	//Managers
 	private int selectedDesign;
 //	private RServeManager rServeManager;
-//	private WebServiceManager webServiceManager;
+	private WebServiceManager webServiceManager;
+	private FileResourceModel jsonField;
 
 	//Zul file components
 	
@@ -319,7 +320,7 @@ public class Specifications {
 		return designs;
 	}
 
-	@GlobalCommand("updateFixedOptions")
+	@Command("updateFixedOptions")
 //	@NotifyChange("*")
 	public void updateFixedOptions(@BindingParam("selected") Boolean selected){
 		System.out.println("activate Fixed");
@@ -369,7 +370,7 @@ public class Specifications {
 	//		}
 	//	}
 
-	@GlobalCommand("updateRandomOptions")
+	@Command("updateRandomOptions")
 //	@NotifyChange("*")
 	public void updateRandomOptions(@BindingParam("selected") Boolean selected){
 		System.out.println("activate Random");
@@ -566,10 +567,9 @@ public class Specifications {
 		this.typeOfDesignList = typeOfDesignList;
 	}
 
-
-	@GlobalCommand("setSsaListvariables")
+	@GlobalCommand("setMsaListvariables")
 	@NotifyChange({"numericModel","factorModel","responseModel","varNames"})
-	public void setSsaListvariables(@BindingParam("filePath")String filepath){
+	public void setMsaListvariables(@BindingParam("filePath")String filepath){
 		//...
 		try{
 			rServeManager = new RServeManager();
@@ -647,7 +647,7 @@ public class Specifications {
 
 				Map<String,Object> args = new HashMap<String,Object>();
 				args.put("filePath", filePath);
-				BindUtils.postGlobalCommand(null, null, "setSsaListvariables", args);
+				BindUtils.postGlobalCommand(null, null, "setMsaListvariables", args);
 
 				if (uploadedFile == null) return;
 
@@ -732,13 +732,13 @@ public class Specifications {
 //		System.out.println("end rserve ssa\n"+msaModel.toString());
 //	}
 
-	@GlobalCommand("addResponse")
+	@Command("addResponse")
 	@NotifyChange({"numericModel","responseModel"})
 	public void addResponse() {
 		chooseResponseVariable();
 	}
 
-	@GlobalCommand("removeResponse")
+	@Command("removeResponse")
 	@NotifyChange({"numericModel","responseModel"})
 	public void removeResponse() {
 		unchooseResponseVariable();
@@ -764,7 +764,7 @@ public class Specifications {
 		return new ArrayList<String>(responseModel);
 	}
 
-	@GlobalCommand("toFactor")
+	@Command("toFactor")
 	@NotifyChange({"factorModel","numericModel"})
 	public void toFactor() {
 		// TODO Auto-generated method stub
@@ -777,7 +777,7 @@ public class Specifications {
 
 	}
 
-	@GlobalCommand("toNumeric")
+	@Command("toNumeric")
 	@NotifyChange({"factorModel", "numericModel"})
 	public void toNumeric() {
 		// TODO Auto-generated method stub
@@ -797,89 +797,158 @@ public class Specifications {
 		}
 	}
 
-//	@Command()
-//	public void validateSsaInputs() {
-//		// TODO Auto-generated method stub
-//		//		try{
-//		if(validateSsaModel()){
-//			System.out.println("pasing variables");
-////			webServiceManager = new WebServiceManager();
-//			btnRunAnalysis.setVisible(false);
-//			btnViewResult.setVisible(true);
-////			webServiceManager.doSingleEnvironmentAnalysis(msaModel);
-//			setResultRServe(msaModel.getAnalysisResultFolder());
-//		} else Messagebox.show(errorMessage);
-//	}
-	
 	@Command()
-	public void validateMsaInputs() {
+	public void validateMsaInputs() {//run button
 		// TODO Auto-generated method stub
-		//		try{
+//				try{
+		errorMessage="Analysis didn't run successfully.";
 		if(validateMsaModel()){
-			System.out.println("pasing variables: "+ msaModel.toString());
-			Map<String,Object> args = new HashMap<String,Object>();
-			args.put("msaModel", msaModel);
-			BindUtils.postGlobalCommand(null, null, "displayMsaResult", args);
+			System.out.println("pasing variables to"+msaModel.getResultFolderPath());
+			webServiceManager = new WebServiceManager();
+			btnRunAnalysis.setVisible(false);
+//			btnViewResult.setVisible(true);
+			webServiceManager.doMultiEnvironmentAnalysis(msaModel);
+			setResultRServe(msaModel.getAnalysisResultFolder());
+			
+			try{
+				jsonField=new FileResourceModel();
+				Client c = ClientBuilder.newClient();
+				WebTarget target= c.target(msaModel.getResultFolderPath());
+				Response response = target.request().get();
+				System.out.println("response"+ response.toString());
+				String json = response.readEntity(String.class); 
+				System.out.println("json"+ json);		
+				
+				while(!(json.length() > 0) || json.contains("not yet done"))
+				{
+					try {
+						response = target.request().get();
+						json = response.readEntity(String.class);
+						System.out.println("\n\n\n\n" + json + "\n\n\n\n");
+						Thread.sleep(10000);
+						
+					}
+					catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					catch(NullPointerException npe){
+						Messagebox.show(errorMessage);
+					}
+				}
+				
+				System.out.println(json);
+				Gson jsonInput= new Gson();
+				jsonField=jsonInput.fromJson(json,FileResourceModel.class);
+				System.out.println("accessFolder: "+ jsonField.getFolderResource());
+				System.out.println("sampleFile: "+ jsonField.getFileListResource()[0]);
+				
+//				btnViewResult.setVisible(true);
+				
+				Map<String,Object> args = new HashMap<String,Object>();
+				args.put("msaModel", msaModel);
+				args.put("fileNames", jsonField.getFileListResource());
+				BindUtils.postGlobalCommand(null, null, "displayMsaResult", args);
+				
+//			}catch(JsonSyntaxException e2) {
+//				// TODO Auto-generated catch block
+//				Messagebox.show(errorMessage+ " (JasonSyntaxException)");
+			}catch(IllegalStateException e3) {
+				// TODO Auto-generated catch block
+				Messagebox.show(errorMessage+ " (IllegalSyntaxException)");
+			}catch(ProcessingException e4) {
+				// TODO Auto-generated catch block
+				Messagebox.show("Cannot connect to the webservice. Please contact your administrator.");
+			}
+			
 		} else Messagebox.show(errorMessage);
 	}
+	
+
+//	@Command()
+//	public void validateMsaInputs() {
+//		// TODO Auto-generated method stub
+//		//		try{
+//		if(validateMsaModel()){
+//			System.out.println("pasing variables: "+ msaModel.toString());
+//			Map<String,Object> args = new HashMap<String,Object>();
+//			args.put("msaModel", msaModel);
+//			BindUtils.postGlobalCommand(null, null, "displayMsaResult", args);
+//		} else Messagebox.show(errorMessage);
+//	}
 
 	
 	@Command()
 	public void showAnalysisResults() {
 		// TODO Auto-generated method stub
-		errorMessage="Analysis is still running";
-		FileResourceModel jsonField=new FileResourceModel();
+		//		errorMessage="Analysis is still running";
 
-		Client c = ClientBuilder.newClient();
-		try{
-			WebTarget target= c.target(msaModel.getResultFolderPath());
-			Response response = target.request().get();
-			String json = response.readEntity(String.class); 
-			if(json.length() > 0){
-				Gson jsonInput= new Gson();
-				jsonField=jsonInput.fromJson(json,FileResourceModel.class);
-				System.out.println("accessFolder: "+ jsonField.getFolderResource());
-				System.out.println("sampleFile: "+ jsonField.getFileListResource()[0]);
-				Map<String,Object> args = new HashMap<String,Object>();
-				args.put("msaModel", msaModel);
-				args.put("fileNames", jsonField.getFileListResource());
-				BindUtils.postGlobalCommand(null, null, "displaySsaResult", args);
-			} else Messagebox.show(errorMessage);
-
-		}catch(NullPointerException npe){
-			Messagebox.show(errorMessage);
-		}catch(JsonSyntaxException e2) {
-			// TODO Auto-generated catch block
-			Messagebox.show(errorMessage);
-		}catch(IllegalStateException e3) {
-			// TODO Auto-generated catch block
-			Messagebox.show(errorMessage);
-		}
-//		catch(ProcessingException pe){
-//			errorMessage="Cannot connect to the web service. Please contact your administrator.";
+		Map<String,Object> args = new HashMap<String,Object>();
+		args.put("msaModel", msaModel);
+		args.put("fileNames", jsonField.getFileListResource());
+		BindUtils.postGlobalCommand(null, null, "displayMsaResult", args);
+		//		catch(ProcessingException pe){x
+		//			errorMessage="Cannot connect to the web service. Please contact your administrator.";
+		//			Messagebox.show(errorMessage);
+		//		}
+	}
+	
+//	@Command()
+//	public void showAnalysisResults() {
+//		// TODO Auto-generated method stub
+//		errorMessage="Analysis is still running";
+//		FileResourceModel jsonField=new FileResourceModel();
+//
+//		Client c = ClientBuilder.newClient();
+//		try{
+//			WebTarget target= c.target(msaModel.getResultFolderPath());
+//			Response response = target.request().get();
+//			String json = response.readEntity(String.class); 
+//			if(json.length() > 0){
+//				Gson jsonInput= new Gson();
+//				jsonField=jsonInput.fromJson(json,FileResourceModel.class);
+//				System.out.println("accessFolder: "+ jsonField.getFolderResource());
+//				System.out.println("sampleFile: "+ jsonField.getFileListResource()[0]);
+//				Map<String,Object> args = new HashMap<String,Object>();
+//				args.put("msaModel", msaModel);
+//				args.put("fileNames", jsonField.getFileListResource());
+//				BindUtils.postGlobalCommand(null, null, "displayMsaResult", args);
+//			} else Messagebox.show(errorMessage);
+//
+//		}catch(NullPointerException npe){
+//			Messagebox.show(errorMessage);
+//		}catch(JsonSyntaxException e2) {
+//			// TODO Auto-generated catch block
+//			Messagebox.show(errorMessage);
+//		}catch(IllegalStateException e3) {
+//			// TODO Auto-generated catch block
 //			Messagebox.show(errorMessage);
 //		}
-	}
+////		catch(ProcessingException pe){
+////			errorMessage="Cannot connect to the web service. Please contact your administrator.";
+////			Messagebox.show(errorMessage);
+////		}
+//	}
 
 	private void setOutputPaths(){
 		// TODO Auto-generated method stub
 		msaModel.setUserAccount("user1");
 		msaModel.setAnalysisResultFolder(AnalysisUtils.getOutputFolderName("MultiTrial"));
-		msaModel.setResultFolderPath(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/SingleTrial/getResultFiles/"+msaModel.getAnalysisResultFolder()+"/");
+		msaModel.setResultFolderPath(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/MultiTrial/getResultFiles/"+msaModel.getAnalysisResultFolder()+"/");
 	}
 
 	private boolean validateMsaModel() {
 		// TODO Auto-generated method stub
 		msaModel.setDesign(selectedDesign); 
-//		setOutputPaths();// for callingTheWebService
+		setOutputPaths();// for callingTheWebService
 
 		try{
-			String folderPath = AnalysisUtils.createOutputFolder(fileName.replaceAll(" ", ""), "msa");
+//			String folderPath = AnalysisUtils.createOutputFolder(fileName.replaceAll(" ", ""), "msa");
 			//set Paths
-			msaModel.setResultFolderPath(folderPath);
+//			msaModel.setResultFolderPath(folderPath);
 
-			String filePath = userFileManager.moveUploadedFileToOutputFolder(folderPath, fileName.replaceAll(" ", ""), uploadedFile);
-			msaModel.setDataFileName(filePath.replace("\\", "/"));
+//			String filePath = userFileManager.moveUploadedFileToOutputFolder(folderPath, fileName.replaceAll(" ", ""), uploadedFile);
+//			msaModel.setDataFileName(filePath.replace("\\", "/"));
 
 			msaModel.setOutFileName(msaModel.getResultFolderPath()+ "MEA_output.txt");
 
@@ -1010,7 +1079,7 @@ public class Specifications {
 		else activateLevelOfConrolsOptions(false);
 	}
 
-	@GlobalCommand("chooseVariable")
+	@Command("chooseVariable")
 	@NotifyChange({"factorModel","genotypeLevelsModel"})
 	public boolean chooseVariable(@BindingParam("varTextBox") Textbox varTextBox, @BindingParam("imgButton") Image imgButton ) {
 		Set<String> set = factorModel.getSelection();
@@ -1053,7 +1122,7 @@ public class Specifications {
 
 	}
 
-	@GlobalCommand("moveListItem")
+	@Command("moveListItem")
 	@NotifyChange({"genotypeLevelsModel","controlsModel"})
 	public void moveListItem(@BindingParam("fromList") Listbox fromList, @BindingParam("toList") Listbox toList ) {
 

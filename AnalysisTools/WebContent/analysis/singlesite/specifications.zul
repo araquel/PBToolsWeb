@@ -136,10 +136,9 @@
 				<space width="10px"/>
 				<vlayout hflex="1">	
 				<separator spacing="30px" />
-				<groupbox id="grpVariableData" mold="3d" width="100%"
-					 style="overflow:auto">
+				<groupbox id="grpVariableData" mold="3d" width="100%" height="600px">
 					<caption label="Data Preview" />
-							<div id="datagrid"  style="overflow:auto"></div>
+							<div id="datagrid" style="overflow:auto" />
 				</groupbox>
 				</vlayout>
 			</hlayout>

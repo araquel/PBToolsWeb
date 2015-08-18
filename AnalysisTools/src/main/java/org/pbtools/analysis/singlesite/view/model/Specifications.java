@@ -308,7 +308,7 @@ public class Specifications {
 		return designs;
 	}
 
-	@GlobalCommand("updateFixedOptions")
+	@Command("updateFixedOptions")
 	//	@NotifyChange("*")
 	public void updateFixedOptions(@BindingParam("selected") Boolean selected){
 		System.out.println("activate Fixed");
@@ -358,7 +358,7 @@ public class Specifications {
 	//		}
 	//	}
 
-	@GlobalCommand("updateRandomOptions")
+	@Command("updateRandomOptions")
 	//	@NotifyChange("*")
 	public void updateRandomOptions(@BindingParam("selected") Boolean selected){
 		System.out.println("activate Random");
@@ -387,7 +387,6 @@ public class Specifications {
 		// TODO Auto-generated method stub
 		groupGenotypeFixed.setOpen(state);
 		updatePairwiseOptions(state);
-
 	}
 
 	@Command("updatePairwiseOptions")
@@ -397,7 +396,7 @@ public class Specifications {
 		if(performPairwiseCheckBox.isChecked() && state) groupPerformPairwise.setOpen(true);
 		else groupPerformPairwise.setOpen(false);
 		compareWithControlsBtn.setSelected(true);
-
+ 
 		if(state){
 			try{
 				genotypeLevels = rServeManager.getLevels(columnList, dataList, ssaModel.getGenotype());
@@ -720,13 +719,13 @@ public class Specifications {
 		System.out.println("end rserve ssa\n"+ssaModel.toString());
 	}
 
-	@GlobalCommand("addResponse")
+	@Command("addResponse")
 	@NotifyChange({"numericModel","responseModel"})
 	public void addResponse() {
 		chooseResponseVariable();
 	}
 
-	@GlobalCommand("removeResponse")
+	@Command("removeResponse")
 	@NotifyChange({"numericModel","responseModel"})
 	public void removeResponse() {
 		unchooseResponseVariable();
@@ -750,7 +749,7 @@ public class Specifications {
 		return new ArrayList<String>(responseModel);
 	}
 
-	@GlobalCommand("toFactor")
+	@Command("toFactor")
 	@NotifyChange({"factorModel","numericModel"})
 	public void toFactor() {
 		// TODO Auto-generated method stub
@@ -763,7 +762,7 @@ public class Specifications {
 
 	}
 
-	@GlobalCommand("toNumeric")
+	@Command("toNumeric")
 	@NotifyChange({"factorModel", "numericModel"})
 	public void toNumeric() {
 		// TODO Auto-generated method stub
@@ -804,7 +803,7 @@ public class Specifications {
 				String json = response.readEntity(String.class); 
 						
 				
-				while(!(json.length() > 0))
+				while(!(json.length() > 0) || json.contains("not yet done"))
 				{
 					try {
 						response = target.request().get();
@@ -855,7 +854,7 @@ public class Specifications {
 		args.put("ssaModel", ssaModel);
 		args.put("fileNames", jsonField.getFileListResource());
 		BindUtils.postGlobalCommand(null, null, "displaySsaResult", args);
-		//		catch(ProcessingException pe){x
+		//		catch(ProcessingException pe){
 		//			errorMessage="Cannot connect to the web service. Please contact your administrator.";
 		//			Messagebox.show(errorMessage);
 		//		}
@@ -1020,7 +1019,7 @@ public class Specifications {
 		else activateLevelOfConrolsOptions(false);
 	}
 
-	@GlobalCommand("chooseVariable")
+	@Command("chooseVariable")
 	@NotifyChange({"factorModel","genotypeLevelsModel"})
 	public boolean chooseVariable(@BindingParam("varTextBox") Textbox varTextBox, @BindingParam("imgButton") Image imgButton ) {
 		Set<String> set = factorModel.getSelection();
@@ -1063,7 +1062,7 @@ public class Specifications {
 
 	}
 
-	@GlobalCommand("moveListItem")
+	@Command("moveListItem")
 	@NotifyChange({"genotypeLevelsModel","controlsModel"})
 	public void moveListItem(@BindingParam("fromList") Listbox fromList, @BindingParam("toList") Listbox toList ) {
 

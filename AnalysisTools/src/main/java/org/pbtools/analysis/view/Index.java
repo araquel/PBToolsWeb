@@ -147,27 +147,53 @@ public class Index {
 	@GlobalCommand("displayMsaResult")
 	@NotifyChange("*")
 	public void displayMsaResult(@ContextParam(ContextType.COMPONENT) Component component,
-			@ContextParam(ContextType.VIEW) Component view, @BindingParam("msaModel") MultiSiteAnalysisModel msaModel) {
-		rServeManager = new RServeManager();
-		rServeManager.doMultiEnvironmentOneStage(msaModel);
+			@ContextParam(ContextType.VIEW) Component view, @BindingParam("msaModel") MultiSiteAnalysisModel msaModel, @BindingParam("fileNames") String[] fileNames) {
 
 		Tabpanels tabPanels = (Tabpanels) component.getFellow("tabPanels");
 		Tabs tabs = (Tabs) component.getFellow("tabs");
 
 		Tabpanel newPanel = new Tabpanel();
 		Tab newTab = new Tab();
-		newTab.setLabel(new File(msaModel.getOutFileName()).getParentFile().getName());
+		newTab.setLabel(msaModel.getAnalysisResultFolder());
 		newTab.setClosable(true);
 
 		//initialize view after view construction.
 		Include studyInformationPage = new Include();
 		studyInformationPage.setParent(newPanel);
-		studyInformationPage.setDynamicProperty("outputFolderPath", msaModel.getResultFolderPath().replaceAll("\\\\", "/"));
-		studyInformationPage.setSrc("/analysis/rserveresultviewer.zul");
+		studyInformationPage.setDynamicProperty("outputFolderPath", AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/output/"+msaModel.getAnalysisResultFolder()+"/");
+		studyInformationPage.setDynamicProperty("fileNames", fileNames);
+		studyInformationPage.setSrc("/analysis/resultviewer.zul");
 
 		tabPanels.appendChild(newPanel);
 		tabs.appendChild(newTab);
+
+		newTab.setSelected(true); 
 	}
+	
+//	@GlobalCommand("displayMsaResult")
+//	@NotifyChange("*")
+//	public void displayMsaResult(@ContextParam(ContextType.COMPONENT) Component component,
+//			@ContextParam(ContextType.VIEW) Component view, @BindingParam("msaModel") MultiSiteAnalysisModel msaModel) {
+//		rServeManager = new RServeManager();
+//		rServeManager.doMultiEnvironmentOneStage(msaModel);
+//
+//		Tabpanels tabPanels = (Tabpanels) component.getFellow("tabPanels");
+//		Tabs tabs = (Tabs) component.getFellow("tabs");
+//
+//		Tabpanel newPanel = new Tabpanel();
+//		Tab newTab = new Tab();
+//		newTab.setLabel(new File(msaModel.getOutFileName()).getParentFile().getName());
+//		newTab.setClosable(true);
+//
+//		//initialize view after view construction.
+//		Include studyInformationPage = new Include();
+//		studyInformationPage.setParent(newPanel);
+//		studyInformationPage.setDynamicProperty("outputFolderPath", msaModel.getResultFolderPath().replaceAll("\\\\", "/"));
+//		studyInformationPage.setSrc("/analysis/rserveresultviewer.zul");
+//
+//		tabPanels.appendChild(newPanel);
+//		tabs.appendChild(newTab);
+//	}
 
 	@GlobalCommand("displayQtlResult")
 	@NotifyChange("*")

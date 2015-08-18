@@ -37,6 +37,10 @@ public class CsvDataViewer {
 
 	private String name;
 
+
+
+
+
 	public CsvDataViewer() {
 		// TODO Auto-generated constructor stub
 	}
@@ -98,7 +102,6 @@ public class CsvDataViewer {
 	@Command
 	public void exportRowData(@ContextParam(ContextType.BIND_CONTEXT) BindContext ctx, @ContextParam(ContextType.VIEW) Component view) {
 		FileUtilities.exportData(getColumnList(), getDataList(), name);
-
 	}
 
 	public String getFilePath() {

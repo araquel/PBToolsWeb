@@ -24,7 +24,7 @@ public class RServeManager {
 	private String errorMessage;
 	private static String BSLASH = "\\";
 	private static String FSLASH = "/";
-	private static String OUTPUTFOLDER_PATH;  //Sessions.getCurrent().getWebApp().getRealPath("resultanalysis")+ System.getProperty("file.separator");
+	private static String OUTPUTFOLDER_PATH; //Sessions.getCurrent().getWebApp().getRealPath("resultanalysis")+ System.getProperty("file.separator");
 	public static String DATA_PATH = System.getProperty("user.dir")+ System.getProperty("file.separator") + "sample_datasets" + System.getProperty("file.separator");
 
 	public RServeManager() {
@@ -36,7 +36,7 @@ public class RServeManager {
 			//			rConnection.eval("library(STAR)"); // not yet 3.0.2
 		} catch (RserveException e) {
 			// TODO Auto-generated catch block
-			errorMessage="RConnection refused.\nRServe Library was not initialized, please contact your administrator.";
+			errorMessage="RConnection refused.\n RServe Library was not initialized, please contact your administrator.";
 			e.printStackTrace();
 
 			Messagebox.show(errorMessage);
@@ -3783,7 +3783,7 @@ public class RServeManager {
 							}
 
 							//default output: Test Genotypic Effect
-							//							String outAnovaTable1 = "capture.output(meaOne1$output[[" + i + "]]$testsig.Geno,file=\"" + outFileName + "\",append = TRUE)";
+							//	String outAnovaTable1 = "capture.output(meaOne1$output[[" + i + "]]$testsig.Geno,file=\"" + outFileName + "\",append = TRUE)";
 							String outAnovaTable1 = "capture.output(cat(\"\nTESTING FOR THE SIGNIFICANCE OF GENOTYPIC EFFECT:\n\n\"),file=\"" + outFileName + "\",append = TRUE)";
 							String outAnovaTable2 = "library(lmerTest)";
 							String outAnovaTable3 = "model1b <- lmer(formula(meaOne1$output[[" + i + "]]$formula1), data = meaOne1$output[[" + i + "]]$data, REML = T)";

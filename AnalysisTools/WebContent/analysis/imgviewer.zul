@@ -1,10 +1,12 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 
-	<window border="none" hflex="1" vflex="1" position="center">
-		<vlayout>
-		<zk if="${arg.height=='800px'}"><label value="${arg.imageName}" /></zk>
-			
-			<image content="${arg.image}" height="${arg.height}"
+<window border="none" hflex="1" vflex="1" position="center">
+	<vlayout>
+		<zk if="${arg.height=='800px'}">
+			<label value="${arg.imageName}" /> </zk>
+
+			<image if="${self != null}" content="${arg.image}" height="${arg.height}"
 				width="${arg.width}" />
-		</vlayout>
-	</window>
+		
+	</vlayout>
+</window>

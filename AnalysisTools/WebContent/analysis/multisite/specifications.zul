@@ -1,8 +1,6 @@
 <zk>
 	<style src="../css/main.css" />
-	<div id="singleSiteSpecificationsWindow"
-		apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.pbtools.analysis.multisite.view.model.Specifications')" align="center" height="80%">
+	<div id="singleSiteSpecificationsWindow" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('org.pbtools.analysis.multisite.view.model.Specifications')" align="center" height="80%">
 		<vlayout>
 			<grid zclass="none">
 				<columns>
@@ -19,7 +17,7 @@
 										spacing="10px">
 										<div align="left">
 											<hlayout>
-												<label id="lblMsgUpload" 	
+												<label id="lblMsgUpload"
 													visible="@load(vm.variableDataVisible)"
 													value="@load(vm.dataFileName)" sclass="label-search" />
 												<button

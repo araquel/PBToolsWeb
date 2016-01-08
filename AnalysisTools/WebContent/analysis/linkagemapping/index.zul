@@ -1,9 +1,6 @@
 <zk>
 	<div id="mainLinkageMappingWindow" apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.strasa.web.analysis.view.Index')" height="90%">
-		<div sclass="page-header">
-			<label value="Linkage Mapping" />
-		</div>
+		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')" height="90%">
 			<tabbox id="tabBox" sclass="page-content">
 			<tabs id="tabs">
 				<tab label="Linkage Mapping Analysis"
@@ -11,7 +8,7 @@
 			</tabs>
 			<tabpanels id="tabPanels">
 				<tabpanel id="specificationsPanel" 	style="overflow:auto">
-					<include id="includeSpecifications" src="/user/analysis/linkagemapping/specifications.zul" />
+					<include id="includeSpecifications" src="/analysis/linkagemapping/specifications.zul" />
 				</tabpanel>
 			</tabpanels>
 		</tabbox>

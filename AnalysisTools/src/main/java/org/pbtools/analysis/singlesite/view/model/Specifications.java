@@ -220,6 +220,7 @@ public class Specifications {
 		numericModel = new ListModelList<String>();
 		responseModel = new ListModelList<String>();
 		factorModel = new ListModelList<String>();
+		controlsModel = new ListModelList<String>();
 
 		//wire textboxes
 		envTextBox = (Textbox) incVariableList.getFellow("envTextBox");
@@ -261,16 +262,13 @@ public class Specifications {
 		heatmapCheckBox = (Checkbox) component.getFellow("heatmapCheckBox");
 		diagnosticplotCheckBox = (Checkbox) component.getFellow("diagnosticplotCheckBox");
 
-		//		studiesCombo = (Combobox) component.getFellow("studiesCombo");
-		//		dataSetCombo = (Combobox) component.getFellow("dataSetCombo");
 
 		//wire comboboxes
 		fieldRowComboBox = (Combobox) component.getFellow("fieldRowComboBox");
 		fieldColumnComboBox = (Combobox) component.getFellow("fieldColumnComboBox");
 		comboboxDesign =  (Combobox) component.getFellow("comboboxDesign");
-		//		comboboxDesign.setModel(getTypeOfDesignList());
-		//wire Other Options UI
 
+		//wire Other Options UI
 		includeOtherOptions =(Include) component.getFellow("includeOtherOptions");
 		groupLevelOfControls = (Groupbox) includeOtherOptions.getFellow("groupLevelOfControls");
 
@@ -298,7 +296,7 @@ public class Specifications {
 	public ListModelList<String> getTypeOfDesignList() {
 		// TODO Auto-generated method stub
 		ListModelList<String> designs = new ListModelList<String>();
-		designs.add("Randomized Complete Block(RCB)"); 
+		designs.add("Randomized Complete Block(RCB)");
 		designs.add("Augmented RCB");
 		designs.add("Augmented Latin Square");
 		designs.add("Alpha-Lattice");
@@ -323,40 +321,6 @@ public class Specifications {
 
 		}
 	}
-
-	//	@Command("updateDataSetList")
-	//	@NotifyChange("*")
-	//	public void updateDataSetList(){
-	//
-	//		dataSetCombo.setSelectedItem(null);
-	//		dataSetCombo.setVisible(false);
-	//
-	//		if(!columnList.isEmpty()){
-	//			columnList.clear();
-	//			dataList.clear();
-	//			//			refreshCsv();
-	//			if (!divDatagrid.getChildren().isEmpty()){
-	//				divDatagrid.getFirstChild().detach();
-	//				BindUtils.postGlobalCommand(null, null, "setSsaListvariables", null);
-	//			}
-	//		}
-	//
-	//		List<StudyDataSet> dataSet = studyDataSetMgr.getDataSetsByStudyId(selectedStudy.getId());
-	//
-	//		if(!dataSet.isEmpty()){//
-	//			dataSetCombo.setVisible(true);
-	//			setStudyDataSets(dataSet);
-	//			setSelectedDataSet(null);
-	//			dataSetCombo.setSelectedItem(null);
-	//			dataSetCombo.setText(null);
-	//			BindUtils.postNotifyChange(null, null, this, "*");
-	//
-	//		}
-	//		else{
-	//			dataSetCombo.setVisible(false);
-	//			Messagebox.show("Please choose a different study","Study has no data", Messagebox.OK, Messagebox.ERROR);
-	//		}
-	//	}
 
 	@Command("updateRandomOptions")
 	//	@NotifyChange("*")
@@ -416,9 +380,13 @@ public class Specifications {
 
 	@Command("heatmapRowColumnCheck")
 	public void heatmapRowColumnCheck(@BindingParam("selecetdIndex1") Integer selectedIndex1, @BindingParam("selecetdIndex2") Integer selectedIndex2 ){
-		if(selectedIndex1.equals(selectedIndex2)){
-			Messagebox.show("You can't have the same row and column variable", "Error", Messagebox.OK, Messagebox.ERROR);
-		}	
+		try{
+			if(selectedIndex1.equals(selectedIndex2)){
+				Messagebox.show("You can't have the same row and column variable", "Error", Messagebox.OK, Messagebox.ERROR);
+			}
+		}catch (NullPointerException npe){
+			
+		}
 	}
 
 	@Command("updateVariableList")
@@ -465,6 +433,7 @@ public class Specifications {
 			AnalysisUtils.disableRow(rowRow, factorModel);
 			AnalysisUtils.disableRow(columnRow, factorModel);
 
+			
 			break;
 		}
 		case 4: {//Row Column
@@ -491,7 +460,7 @@ public class Specifications {
 			AnalysisUtils.disableRow(columnRow, factorModel);
 			break;
 		}
-		case 6: {// Latinized Row Column
+		case 6: {//Latinized Row Column
 			enableAugmentedOptions(false);
 			if(performPairwiseCheckBox.isChecked()){
 				activateLevelOfConrolsOptions(true);
@@ -586,7 +555,6 @@ public class Specifications {
 //		numericLb.setModel(numericModel);
 //		factorLb.setModel(factorModel);
 //		responseLb.setModel(responseModel);
-
 		envTextBox.setText("");
 		genotypeTextBox.setText("");
 		blockTextBox.setText("");
@@ -1062,18 +1030,27 @@ public class Specifications {
 
 	}
 
-	@Command("moveListItem")
+	@Command("selectGenotypeLevel")
 	@NotifyChange({"genotypeLevelsModel","controlsModel"})
-	public void moveListItem(@BindingParam("fromList") Listbox fromList, @BindingParam("toList") Listbox toList ) {
-
-		for (Listitem selectedItem : fromList.getSelectedItems()) {
-			toList.appendChild(selectedItem);
-			fromList.removeChild(selectedItem);
+	public void selectGenotypeLevel() {
+		Set<String> set = genotypeLevelsModel.getSelection();
+		for (String selectedItem : set) {
+			controlsModel.add(selectedItem);
+			genotypeLevelsModel.remove(selectedItem);
 		}
 		// TODO Auto-generated method stub
 	}
 
-
+	@Command("unselectGenotypeLevel")
+	@NotifyChange({"genotypeLevelsModel","controlsModel"})
+	public void unselectGenotypeLevel() {
+		Set<String> set = controlsModel.getSelection();
+		for (String selectedItem : set) {
+			genotypeLevelsModel.add(selectedItem);
+			controlsModel.remove(selectedItem);
+		}
+		// TODO Auto-generated method stub
+	}
 	@Command("checkIfGenotypeOptionIsSelected")
 	public void checkIfGenotypeOptionIsSelected(@BindingParam("selected") String selected, @BindingParam("groupbox") Groupbox groupbox) {
 

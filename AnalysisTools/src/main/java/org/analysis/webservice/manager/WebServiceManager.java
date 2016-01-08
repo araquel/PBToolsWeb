@@ -37,18 +37,7 @@ public class WebServiceManager {
 	public static String DATA_PATH = System.getProperty("user.dir")+ System.getProperty("file.separator") + "sample_datasets" + System.getProperty("file.separator");
 
 	public WebServiceManager(){
-//		try {
-//			rConnection	= new RConnection();
-//			inputTransform = new InputTransform();
-//			System.out.println("started rserve connection");
-//			rConnection.eval("library(PBTools)");
-			//			rConnection.eval("library(STAR)"); // not yet 3.0.2
-//		} catch (RserveException e) {
-			// TODO Auto-generated catch block
-//			errorMessage="RConnection refused.\nRServe Library was not initialized, please contact your administrator.";
-//			e.printStackTrace();
-//			Messagebox.show(errorMessage);
-//		}
+		
 	}
 
 	private void readData(String dataFileName){
@@ -60,26 +49,22 @@ public class WebServiceManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//		rConnection.close();
 	}
 
 	public ArrayList<String> getVariableInfo(String fileName, int fileFormat,String separator) {
 		String funcGetVarInfo;
 
 		ArrayList<String> toreturn=new ArrayList<String>();
-		if (fileFormat == 2)  
+		if (fileFormat == 2)
 			funcGetVarInfo = "varsAndTypes <- getVarInfo(fileName = \"" + fileName + "\", fileFormat = 2, separator = \"" + separator + "\")";
-		else funcGetVarInfo = "varsAndTypes <- getVarInfo(fileName = \"" + fileName + "\", fileFormat = " + fileFormat + ", separator = NULL)"; 
-		//		String writeTempData = "tryCatch(write.table(varsAndTypes,file =\"" + tempFileName + "\",sep=\":\",row.names=FALSE), error=function(err) \"notRun\")";
+		else funcGetVarInfo = "varsAndTypes <- getVarInfo(fileName = \"" + fileName + "\", fileFormat = " + fileFormat + ", separator = NULL)";
 
 		System.out.println(funcGetVarInfo);
-		//		System.out.println(writeTempData);
 
 		String[] vars;
 
 		try {
 			rConnection.eval(funcGetVarInfo);
-			//			rConnection.eval(writeTempData);
 			vars = rConnection.eval("as.vector(varsAndTypes$Variable)").asStrings();
 			String[] types = rConnection.eval("as.vector(varsAndTypes$Type)").asStrings();
 			for (int i = 0; i < vars.length; i++){
@@ -100,17 +85,37 @@ public class WebServiceManager {
 		return toreturn;
 	}
 
+	public void getMultiTrialResultZip(String foldername){
+		try{
+			System.out.println(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/MultiTrial/exportAsZip/");
+
+			Client c = ClientBuilder.newClient();
+			WebTarget target= c.target(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/MultiTrial/exportAsZip/");
+			Response response = target.request().post(Entity.text(foldername));
+
+			if (response.getStatus() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ response.getStatus());
+			}
+
+			String output = response.getEntity().toString();
+			System.out.println("Server response .... \n");
+			System.out.println(response.readEntity(String.class));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void doSingleEnvironmentAnalysis(SingleSiteAnalysisModel ssaModel) {
 		try{
 			Gson gson = new Gson();
 			String json = gson.toJson(ssaModel);
-			
+
 			System.out.println(json);
 
 			Client c = ClientBuilder.newClient();
 			WebTarget target= c.target(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/SingleTrial/analyze");
-//			WebTarget target= c.target(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/SingleTrial/run");
-//			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/analyze");
 			Response response = target.request().post(Entity.json(json));
 
 			if (response.getStatus() != 200) {
@@ -126,18 +131,16 @@ public class WebServiceManager {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void doMultiEnvironmentAnalysis(MultiSiteAnalysisModel msaModel) {
 		try{
 			Gson gson = new Gson();
 			String json = gson.toJson(msaModel);
-			
+
 			System.out.println(json);
 
 			Client c = ClientBuilder.newClient();
 			WebTarget target= c.target(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/MultiTrial/analyze");
-//			WebTarget target= c.target(AnalysisUtils.WEB_SERVICE_ADDRESS+"/WS-RS/rest/SingleTrial/run");
-//			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/analyze");
 			Response response = target.request().post(Entity.json(json));
 
 			if (response.getStatus() != 200) {
@@ -153,36 +156,7 @@ public class WebServiceManager {
 			e.printStackTrace();
 		} 
 	}
-	
-//	public void getFilesFromWS(String outputFolderPath) {
-//
-//		try{
-//
-//			Gson gson = new Gson();
-//			String json = gson.toJson(ssaModel);
-//			
-//			System.out.println(json);
-//
-//			Client c = ClientBuilder.newClient();
-//			WebTarget target= c.target("http://172.29.4.166:8080/WS-RS/rest/SingleTrial/analyze");
-////			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/run");
-////			WebTarget target= c.target("http://localhost:8080/WS-RS/rest/SingleTrial/analyze");
-//			Response response = target.request().post(Entity.json(json));
-//
-//			if (response.getStatus() != 200) {
-//				throw new RuntimeException("Failed : HTTP error code : "
-//						+ response.getStatus());
-//			}
-//
-//			String output = response.getEntity().toString();
-//			System.out.println("Server response .... \n");
-//			System.out.println(response.readEntity(String.class));
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
+
 	private String getDisplayName(String dataFileName) {
 		// TODO Auto-generated method stub
 		String[] newFile = dataFileName.split(FSLASH);
@@ -214,7 +188,7 @@ public class WebServiceManager {
 		String heatmapColumn = ssaModel.getHeatmapColumn();
 		boolean diagnosticPlot = ssaModel.isDiagnosticPlot();
 		boolean genotypeFixed = ssaModel.isGenotypeFixed();
-		boolean performPairwise = ssaModel.isPerformPairwise();
+		boolean performPairwise = ssaModel.isPerformPairwise(); 
 		String pairwiseAlpha = ssaModel.getPairwiseAlpha();
 		String[] genotypeLevels = ssaModel.getGenotypeLevels();
 		String[] controlLevels = ssaModel.getControlLevels();
@@ -239,27 +213,27 @@ public class WebServiceManager {
 			String design = new String();
 			switch (designIndex) {
 			case 0: {
-				designUsed = "Randomized Complete Block (RCB)"; 
+				designUsed = "Randomized Complete Block (RCB)";
 				design = "RCB"; 
 				break;
 			}
 			case 1: {
-				designUsed = "Augmented RCB"; 
+				designUsed = "Augmented RCB";
 				design = "AugRCB";
 				break;
 			}
 			case 2: {
-				designUsed = "Augmented Latin Square"; 
+				designUsed = "Augmented Latin Square";
 				design = "AugLS";
 				break;
 			}
 			case 3: {
-				designUsed = "Alpha-Lattice"; 
+				designUsed = "Alpha-Lattice";
 				design = "Alpha";
 				break;
 			}
 			case 4: {
-				designUsed = "Row-Column"; 
+				designUsed = "Row-Column";
 				design = "RowCol";
 				break;
 			}
@@ -285,7 +259,7 @@ public class WebServiceManager {
 			rConnection.eval(readData);
 			String runSuccessData = rConnection.eval("data").toString();
 
-			if (runSuccessData != null && runSuccessData.equals("notRun")) {	
+			if (runSuccessData != null && runSuccessData.equals("notRun")) {
 				System.out.println("error");
 				rConnection.eval("capture.output(cat(\"\n***Error reading data.***\n\"),file=\"" + outFileName + "\",append = FALSE)"); 
 			}
@@ -340,6 +314,7 @@ public class WebServiceManager {
 						groupVars = "c(\"" + genotype + "\", \"" + rep + "\", \"" + row + "\", \"" + column + "\")";
 					}
 				}
+				
 				String fixedHead = "capture.output(cat(\"GENOTYPE AS: Fixed\n\"),file=\""+ outFileName + "\",append = TRUE)";
 				rConnection.eval(funcSsaFixed);
 				rConnection.eval(sep2);
@@ -369,7 +344,7 @@ public class WebServiceManager {
 						int i = k + 1; // 1-relative index;
 						String respVarHead = "capture.output(cat(\"\nRESPONSE VARIABLE: " + respvars[k] + "\n\"),file=\"" + outFileName + "\",append = TRUE)";
 						rConnection.eval(sep);
-						rConnection.eval(respVarHead);
+						rConnection.eval(respVarHead); 
 						rConnection.eval(sep);
 						rConnection.eval(outspace);
 
@@ -508,7 +483,7 @@ public class WebServiceManager {
 								String outAnovaTable4 = "a.table <- anova(model1b)";
 								String outAnovaTable5 = "pvalue <- formatC(as.numeric(format(a.table[1,6], scientific=FALSE)), format=\"f\")";
 								String outAnovaTable6 = "a.table<-cbind(round(a.table[,c(\"NumDF\", \"Sum Sq\", \"Mean Sq\", \"F.value\", \"DenDF\")], digits=4),pvalue)";
-//								String outAnovaTable6 = "a.table<-cbind(round(a.table[,1:5], digits=4),pvalue)";
+								//								String outAnovaTable6 = "a.table<-cbind(round(a.table[,1:5], digits=4),pvalue)";
 								String outAnovaTable7 = "colnames(a.table)<-c(\"Df\", \"Sum Sq\", \"Mean Sq\", \"F value\", \"Denom\", \"Pr(>F)\")";
 								String outAnovaTable8 = "capture.output(cat(\"Analysis of Variance Table with Satterthwaite Denominator Df\n\"),file=\"" + outFileName + "\",append = TRUE)";
 								String outAnovaTable9 = "capture.output(a.table,file=\"" + outFileName + "\",append = TRUE)";
@@ -1163,7 +1138,7 @@ public class WebServiceManager {
 								else if (designIndex == 4)
 									funcEstCorr = "gpcorr <- try(genoNpheno.corr(\"" + design + "\",data," + respvarVector + ",\"" + genotype + "\",\"" + row + "\",\"" + column + "\",\"" + rep + "\",\"" + environment + "\", excludeLevels=TRUE, excludeList = " + controlLevelsVector + "), silent=TRUE)";
 								else if (designIndex == 5)
-									funcEstCorr = "gpcorr <- try(genoNpheno.corr(\"" + design + "\",data," + respvarVector + ",\"" + genotype + "\",\"" + block + "\",column=NULL,\"" + rep + "\",\"" + environment + "\", excludeLevels=TRUE, excludeList = " + controlLevelsVector + "), silent=TRUE)";
+									funcEstCorr = "gpcorr <- try(genoNpheno.corr(\"" + design + "\",data," + respvarVector + ",\"" + genotype + "\",\"" + block+ "\",column=NULL,\"" + rep + "\",\"" + environment + "\", excludeLevels=TRUE, excludeList = " + controlLevelsVector + "), silent=TRUE)";
 								else if (designIndex == 6)
 									funcEstCorr = "gpcorr <- try(genoNpheno.corr(\"" + design + "\",data," + respvarVector + ",\"" + genotype + "\",\"" + row + "\",\"" + column + "\",\"" + rep + "\",\"" + environment + "\", excludeLevels=TRUE, excludeList = " + controlLevelsVector + "), silent=TRUE)";
 							}
@@ -1598,7 +1573,7 @@ public class WebServiceManager {
 
 										String envLevelsCommand = "length(heat1[[" + i + "]]$site)";
 										int envLevels = rConnection.eval(envLevelsCommand).asInteger();
-										for (int m = 0; m < envLevels; m++) { 
+										for (int m = 0; m < envLevels; m++) {
 											int j = m + 1; // 1-relative index;
 
 											String warningListCommand = "heat1[[" + i + "]]$site[["+ j + "]]";

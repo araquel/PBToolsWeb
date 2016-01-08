@@ -67,11 +67,11 @@
 				<image style="cursor:pointer"
 					id="addGenotypeControlsButton" src="/images/rightarrow_g.png"
 					tooltip="Add Control variable" align="center"
-					onClick="@command('moveListItem', fromList=genotypeLevelsLb, toList=controlsLb)" />
+					onClick="@command('selectGenotypeLevel')" />
 				<image style="cursor:pointer"
 					id="removeGenotypeControlsButton" src="/images/leftarrow_g.png"
 					tooltip="Remove Control variable" align="center"
-					onClick="@command('moveListItem', fromList=controlsLb, toList=genotypeLevelsLb)" />
+					onClick="@command('unselectGenotypeLevel')" />
 				<space width="10px"></space>
 				<listbox id="controlsLb"  model="@bind(vm.controlsModel)" hflex="1" rows="4"
 					width="300px" checkmark="true">
@@ -89,11 +89,11 @@
 		<vbox>
 			<checkbox
 				label="Stability Analysis Using Finlay-Wilkinson Model"
-				id="checkBoxStabilityFinlayWilkinson" />
+				id="checkBoxStabilityFinlayWilkinson" visible="false" />
 			<checkbox label="Stability Analysis Using Shukla's Model"
-				id="checkBoxStabilityShukla" />
-			<checkbox label="AMMI Analysis" id="checkBoxAmmi" />
-			<checkbox label="GGE Analysis" id="checkBoxGge" />
+				id="checkBoxStabilityShukla" visible="false"/>
+			<checkbox label="AMMI Analysis" id="checkBoxAmmi" visible="false"/>
+			<checkbox label="GGE Analysis" id="checkBoxGge" visible="false"/>
 		</vbox>
 		<groupbox hflex="1">
 			<caption>Display:</caption>

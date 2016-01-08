@@ -2,8 +2,8 @@
 	<style src="../css/main.css" />
 	<div id="singleSiteSpecificationsWindow"
 		apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.strasa.web.analysis.geneticsimilarity.view.Index')"
-		align="center" height="100%">
+		viewModel="@id('vm') @init('org.pbtools.analysis.geneticsimilarity.view.Index')"
+		 height="100%" >
 		<vlayout>
 			<separator spacing="20px"/>
 			<hlayout>
@@ -50,7 +50,7 @@
 				</vbox>
 			</hlayout>
 			<hlayout>
-				<div hflex="1" vflex="1"
+				<div hflex="1" vflex="1" >
 					<groupbox sclass="z-demo-config" hflex="1"
 						vflex="1">
 						Select pedigree data:

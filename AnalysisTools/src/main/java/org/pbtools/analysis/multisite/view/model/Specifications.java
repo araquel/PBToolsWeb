@@ -75,13 +75,13 @@ import com.google.gson.JsonSyntaxException;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class Specifications {	
+public class Specifications {
 	//Managers
 	private int selectedDesign;
 //	private RServeManager rServeManager;
 	private WebServiceManager webServiceManager;
 	private FileResourceModel jsonField;
-
+ 
 	//Zul file components
 	
 	private Button chooseResponseBtn;
@@ -218,7 +218,7 @@ public class Specifications {
 		btnViewResult = (Button) component.getFellow("btnViewResult");
 		btnRunAnalysis = (Button) component.getFellow("btnRunAnalysis");
 		uploadCSVbtn = (Button) component.getFellow("uploadCSVbtn");
-		//		selectDataBtn = (Button) component.getFellow("selectDataBtn");
+		//selectDataBtn = (Button) component.getFellow("selectDataBtn");
 
 		incVariableList = (Include) component.getFellow("includeVariableList");
 		numericLb = (Listbox) incVariableList.getFellow("numericLb");
@@ -227,6 +227,7 @@ public class Specifications {
 
 		numericModel = new ListModelList<String>();
 		responseModel = new ListModelList<String>();
+		controlsModel = new ListModelList<String>();
 		factorModel = new ListModelList<String>();
 
 		//wire textboxes
@@ -307,7 +308,7 @@ public class Specifications {
 		userFileManager = new UserFileManager();
 	}
 
-	public ListModelList<String> getTypeOfDesignList() {
+	public ListModelList<String> getTypeOfDesignList(){
 		// TODO Auto-generated method stub
 		ListModelList<String> designs = new ListModelList<String>();
 		designs.add("Randomized Complete Block(RCB)"); 
@@ -431,16 +432,16 @@ public class Specifications {
 //	public void heatmapRowColumnCheck(@BindingParam("selecetdIndex1") Integer selectedIndex1, @BindingParam("selecetdIndex2") Integer selectedIndex2 ){
 //		if(selectedIndex1.equals(selectedIndex2)){
 //			Messagebox.show("You can't have the same row and column variable", "Error", Messagebox.OK, Messagebox.ERROR);
-//		}	
+//		}
 //	}
 	
-	@Command("updateVariableList")
+	@Command("updateVariableList")	
 	@NotifyChange("factorModel")
 	public void updateVariableList(@BindingParam("selectedIndex") Integer selectedIndex){
 		selectedDesign = selectedIndex;
 		msaModel.setDesign(selectedIndex);
 //		System.out.println("chose " + Integer.toString(selectedIndex));
-		switch (selectedIndex) {
+		switch (selectedIndex){
 		case 1: {//AugmentedRCB
 			enableAugmentedOptions(true);
 			if(performPairwiseCheckBox.isChecked()){
@@ -551,7 +552,7 @@ public class Specifications {
 	}
 
 	private void enableAugmentedOptions(boolean state) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub	
 		if(randomCheckBox.isChecked()){
 			groupGenotypeRandom.setOpen(true);
 			if(!responseModel.isEmpty())estimateGenotypeCheckBox.setChecked(true);
@@ -824,9 +825,7 @@ public class Specifications {
 					try {
 						response = target.request().get();
 						json = response.readEntity(String.class);
-						System.out.println("\n\n\n\n" + json + "\n\n\n\n");
 						Thread.sleep(10000);
-						
 					}
 					catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -864,7 +863,6 @@ public class Specifications {
 		} else Messagebox.show(errorMessage);
 	}
 	
-
 //	@Command()
 //	public void validateMsaInputs() {
 //		// TODO Auto-generated method stub
@@ -939,7 +937,7 @@ public class Specifications {
 
 	private boolean validateMsaModel() {
 		// TODO Auto-generated method stub
-		msaModel.setDesign(selectedDesign); 
+		msaModel.setDesign(selectedDesign);
 		setOutputPaths();// for callingTheWebService
 
 		try{
@@ -953,7 +951,6 @@ public class Specifications {
 			msaModel.setOutFileName(msaModel.getResultFolderPath()+ "MEA_output.txt");
 
 			//set Vars
-
 			if(!respvars.isEmpty()) msaModel.setRespvars(respvars.toArray(new String[respvars.size()]));
 			else{
 				errorMessage = "response variable cannot be empty";
@@ -996,7 +993,6 @@ public class Specifications {
 				return false;
 			}
 
-			
 			//Graph Options
 			msaModel.setBoxplotRawData(boxplotCheckBox.isChecked());
 			msaModel.setHistogramRawData(histogramCheckBox.isChecked());
@@ -1015,10 +1011,16 @@ public class Specifications {
 
 			msaModel.setGenotypeRandom(randomCheckBox.isChecked());
 			msaModel.setGenotypeFixed(fixedCheckBox.isChecked());
-			msaModel.setAmmi(checkBoxAmmi.isChecked());
-			msaModel.setGge(checkBoxGge.isChecked());
-			msaModel.setStabilityFinlay(checkBoxStabilityFinlayWilkinson.isChecked());
-			msaModel.setStabilityShukla(checkBoxStabilityShukla.isChecked());
+			
+//			msaModel.setAmmi(checkBoxAmmi.isChecked());
+//			msaModel.setGge(checkBoxGge.isChecked());
+//			msaModel.setStabilityFinlay(checkBoxStabilityFinlayWilkinson.isChecked());
+//			msaModel.setStabilityShukla(checkBoxStabilityShukla.isChecked());
+			
+			msaModel.setAmmi(false);
+			msaModel.setGge(false);
+			msaModel.setStabilityFinlay(false);
+			msaModel.setStabilityShukla(false);
 
 			if(!msaModel.isGenotypeFixed() && !msaModel.isGenotypeRandom()){
 				errorMessage = "Please specify whether the genotype variable is fixed or random.";
@@ -1122,18 +1124,29 @@ public class Specifications {
 
 	}
 
-	@Command("moveListItem")
+	@Command("selectGenotypeLevel")
 	@NotifyChange({"genotypeLevelsModel","controlsModel"})
-	public void moveListItem(@BindingParam("fromList") Listbox fromList, @BindingParam("toList") Listbox toList ) {
-
-		for (Listitem selectedItem : fromList.getSelectedItems()) {
-			toList.appendChild(selectedItem);
-			fromList.removeChild(selectedItem);
+	public void selectGenotypeLevel() {
+		Set<String> set = genotypeLevelsModel.getSelection();
+		for (String selectedItem : set) {
+			System.out.println(selectedItem);
+			controlsModel.add(selectedItem);
+			genotypeLevelsModel.remove(selectedItem);
 		}
 		// TODO Auto-generated method stub
 	}
 
-
+	@Command("unselectGenotypeLevel")
+	@NotifyChange({"genotypeLevelsModel","controlsModel"})
+	public void unselectGenotypeLevel() {
+		Set<String> set = controlsModel.getSelection();
+		for (String selectedItem : set) {
+			genotypeLevelsModel.add(selectedItem);
+			controlsModel.remove(selectedItem);
+		}
+		// TODO Auto-generated method stub
+	}
+	
 	@Command("checkIfGenotypeOptionIsSelected")
 	public void checkIfGenotypeOptionIsSelected(@BindingParam("selected") String selected, @BindingParam("groupbox") Groupbox groupbox) {
 
@@ -1345,6 +1358,7 @@ public class Specifications {
 	public void setControlsModel(ListModelList<String> controlsModel) {
 		this.controlsModel = controlsModel;
 	}
+	
 	public void setActivePage(int activePage) {
 		System.out.println("pageSize");
 		reloadCsvGrid();

@@ -121,7 +121,7 @@ public class Index {
 	@GlobalCommand("displaySsaResult")
 	@NotifyChange("*")
 	public void displaySsaResult(@ContextParam(ContextType.COMPONENT) Component component,
-			@ContextParam(ContextType.VIEW) Component view, @BindingParam("ssaModel") SingleSiteAnalysisModel ssaModel, @BindingParam("fileNames") String[] fileNames) {
+			@ContextParam(ContextType.VIEW) Component view, @BindingParam("ssaModel") SingleSiteAnalysisModel ssaModel, @BindingParam("fileNames") String[] fileNames){
 
 		Tabpanels tabPanels = (Tabpanels) component.getFellow("tabPanels");
 		Tabs tabs = (Tabs) component.getFellow("tabs");

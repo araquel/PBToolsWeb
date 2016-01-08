@@ -1,6 +1,6 @@
 <zk>
 	<div id="mainLinkageMappingWindow" apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.strasa.web.analysis.view.Index')" height="90%">
+		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')" height="90%">
 		<div sclass="page-header">
 			<label value="Genome-based Best Linear Unbiased Prediction (GBLUP)" />
 		</div>
@@ -11,7 +11,7 @@
 			</tabs>
 			<tabpanels id="tabPanels">
 				<tabpanel id="specificationsPanel" 	style="overflow:auto">
-					<include id="includeSpecifications" src="/user/analysis/genomicsselection/gblup/specifications.zul" />
+					<include id="includeSpecifications" src="/analysis/genomicsselection/gblup/specifications.zul" />
 				</tabpanel>
 			</tabpanels>
 		</tabbox>

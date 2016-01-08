@@ -3,7 +3,7 @@
 	height="98%">
 	<vlayout height="98%">
 		<div align="Right">
-			<button label="Export results as .zip" visible="false"
+			<button label="Export results as .zip" onClick="@command('exportFolderToZip')" visible="true"
 				sclass="btn-success" image="/images/export16.png" />
 		</div>
 		<tabbox id="tabBox" sclass="page-content" height="750px" hflex="1">

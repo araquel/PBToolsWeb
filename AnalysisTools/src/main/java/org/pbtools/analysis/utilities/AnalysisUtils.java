@@ -1,6 +1,5 @@
 package org.pbtools.analysis.utilities;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,13 +30,31 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 
 public class AnalysisUtils {
-
 	private static final String FILE_SEPARATOR  = System.getProperty("file.separator");
 //	public static final String WEB_SERVICE_ADDRESS  = "http://54.86.161.210:8080/"; // no result at all
 //	public static final String WEB_SERVICE_ADDRESS  = "http://172.31.45.231:8080/"; // connection times out
-	public static final String WEB_SERVICE_ADDRESS  = "http://172.29.4.166:8080";  //Sir Alex
-//	public static final String WEB_SERVICE_ADDRESS  = "http://172.31.8.153:8080"; // "http://52.74.63.249:8080";//  //jack 172.31.8.153 //http://52.74.63.249:8080/
+	public static final String WEB_SERVICE_ADDRESS  = "http://172.29.4.166:8080";  //Sir Alex local
+//	public static final String WEB_SERVICE_ADDRESS  = "http://172.31.8.153:8080"; // "http://52.74.63.249:8080";//  //server 172.31.8.153 //http://52.74.63.249:8080/
 //	public static final String WEB_SERVICE_ADDRESS  = "http://localhost:8080"; //"http://172.29.4.166:8080";
+
+	public static String createOutputFolder(String fileName, String analysisType) {
+			// TODO Auto-generated method stub
+			String userFolderPath, outputStudyPath="";
+				String dataFileName = fileName.replaceAll(".csv", "");
+				dataFileName = dataFileName.replaceAll(".tmp", "");
+				
+			if(analysisType.equals("ssa")) userFolderPath=Sessions.getCurrent().getWebApp().getRealPath("resultanalysis")+ FILE_SEPARATOR +"BIMS"+ FILE_SEPARATOR+ "Single-Site";
+	//				SecurityUtil.getDbUser().getUsername()+ FILE_SEPARATOR+ "Single-Site";
+			else userFolderPath =Sessions.getCurrent().getWebApp().getRealPath("resultanalysis")+ FILE_SEPARATOR +"BIMS"+FILE_SEPARATOR+ "Multi-Site";
+	//				SecurityUtil.getDbUser().getUsername()+ FILE_SEPARATOR+ "Multi-Site";
+			
+			String outputStudyPath1 = userFolderPath+ FILE_SEPARATOR + getOutputFolderName(dataFileName) +FILE_SEPARATOR;
+			
+			if(createFolder(userFolderPath)){
+				createFolder(outputStudyPath1);
+			}
+			return outputStudyPath1;
+		}
 
 	public static void disableRow(Row row, ListModelList<String> factorModel) {
 		// TODO Auto-generated method stub
@@ -54,7 +71,7 @@ public class AnalysisUtils {
 		ListModelList<String> modelList = new ListModelList<String>();
 		for(String s : variableInfo){
 			if(s.contains(":Numeric")) modelList.add(s.split(":")[0]);
-		}
+		} 	
 		return modelList;
 	}
 	
@@ -73,7 +90,7 @@ public class AnalysisUtils {
 		for(String s : varInfo){
 			if(s.split(":")[0].equals(selectedItem) && s.contains("Numeric")) return true;
 		}
-		return false;	
+		return false;
 	}
 
 	public static String getOutputFolderName(String fileName) {
@@ -87,31 +104,9 @@ public class AnalysisUtils {
 		return Long.toString(now.getTimeInMillis());
 	}
 	
-	public static String createOutputFolder(String fileName, String analysisType) {
-		// TODO Auto-generated method stub
-		String userFolderPath, outputStudyPath="";
-			String dataFileName = fileName.replaceAll(".csv", "");
-			dataFileName = dataFileName.replaceAll(".tmp", "");
-			
-		
-		if(analysisType.equals("ssa")) userFolderPath=Sessions.getCurrent().getWebApp().getRealPath("resultanalysis")+ FILE_SEPARATOR +"BIMS"+ FILE_SEPARATOR+ "Single-Site";
-//				SecurityUtil.getDbUser().getUsername()+ FILE_SEPARATOR+ "Single-Site";
-		else userFolderPath =Sessions.getCurrent().getWebApp().getRealPath("resultanalysis")+ FILE_SEPARATOR +"BIMS"+FILE_SEPARATOR+ "Multi-Site";
-//				SecurityUtil.getDbUser().getUsername()+ FILE_SEPARATOR+ "Multi-Site";
-		
-		String outputStudyPath1 = userFolderPath+ FILE_SEPARATOR + getOutputFolderName(dataFileName) +FILE_SEPARATOR;
-		
-		if(createFolder(userFolderPath)){	
-			createFolder(outputStudyPath1);
-		}
-		
-		return outputStudyPath1;
-	}
-	
 	public static String getUserTempFolder() {
 		// TODO Auto-generated method stub
 		String tmpFolderPath="";
-
 //		tmpFolderPath=Sessions.getCurrent().getWebApp().getRealPath("resultanalysis")+ FILE_SEPARATOR +
 //				SecurityUtil.getDbUser().getUsername()+ FILE_SEPARATOR+ "tmp"+ FILE_SEPARATOR;
 //		

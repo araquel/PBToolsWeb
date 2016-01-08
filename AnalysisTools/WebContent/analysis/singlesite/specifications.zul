@@ -19,7 +19,7 @@
 										spacing="10px">
 										<div align="left">
 											<hlayout>
-												<label id="lblMsgUpload" 	
+												<label id="lblMsgUpload" 
 													visible="@load(vm.variableDataVisible)"
 													value="@load(vm.dataFileName)" sclass="label-search" />
 												<button

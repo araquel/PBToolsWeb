@@ -24,7 +24,7 @@ public class SingleSiteAnalysisModel {
 	private String rep;
 	private String row;
 	private String column;
-	private boolean descriptiveStat; 
+	private boolean descriptiveStat;
 	private boolean varianceComponents;
 	private boolean boxplotRawData;
 	private boolean histogramRawData;

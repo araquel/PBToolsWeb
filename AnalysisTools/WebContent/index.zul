@@ -54,7 +54,7 @@
 			</tabs>
 			<tabpanels id="tabPanels">
 				<tabpanel id="specificationsPanel">
-					<include id="includeSpecifications" src="specifications.zul" />
+					<include id="includeSpecifications" src="analysis/singlesite/specifications.zul" />
 				</tabpanel>
 			</tabpanels>
 		</tabbox>

@@ -43,7 +43,7 @@
 		});
 	</script>
 	<div id="mainSingleSiteWindow" apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')">
+		viewModel="@id('vm') @init('org.pbtools.analysis.view.model.Index')">
 <!-- 		<div sclass="page-header"> -->
 <!-- 			<label id="tabLabel" value="Single-site Analysis" /> -->
 <!-- 		</div> -->

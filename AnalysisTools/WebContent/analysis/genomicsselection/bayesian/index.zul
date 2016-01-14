@@ -1,6 +1,6 @@
 <zk>
 	<div id="mainLinkageMappingWindow" apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')" height="90%">
+		viewModel="@id('vm') @init('org.pbtools.analysis.view.model.Index')" height="90%">
 			<tabbox id="tabBox" sclass="page-content">
 			<tabs id="tabs">
 				<tab label="Genomics Selection: Bayesian Prediction"

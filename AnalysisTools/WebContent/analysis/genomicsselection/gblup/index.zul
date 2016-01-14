@@ -1,6 +1,6 @@
 <zk>
 	<div id="mainLinkageMappingWindow" apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')" height="90%">
+		viewModel="@id('vm') @init('org.pbtools.analysis.view.model.Index')" height="90%">
 		<div sclass="page-header">
 			<label value="Genome-based Best Linear Unbiased Prediction (GBLUP)" />
 		</div>

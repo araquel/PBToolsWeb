@@ -1,5 +1,5 @@
 <window id="textViewerHtml" apply="org.zkoss.bind.BindComposer"
-	viewModel="@id('vm') @init('org.pbtools.analysis.view.ResultViewer')"
+	viewModel="@id('vm') @init('org.pbtools.analysis.view.model.ResultViewer')"
 	height="98%">
 	<vlayout height="98%">
 		<div align="Right">

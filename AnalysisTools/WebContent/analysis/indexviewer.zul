@@ -1,6 +1,6 @@
 <zk>
 	<div id="main" apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.pbtools.analysis.view.Index')">
+		viewModel="@id('vm') @init('org.pbtools.analysis.view.model.Index')">
 
 		<separator height="5px"></separator>
 

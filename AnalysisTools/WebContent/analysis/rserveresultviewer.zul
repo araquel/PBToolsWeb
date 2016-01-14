@@ -1,4 +1,4 @@
-<window id="textViewerHtml" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('org.pbtools.analysis.view.RServeResultViewer')" height="98%">
+<window id="textViewerHtml" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('org.pbtools.analysis.view.model.RServeResultViewer')" height="98%">
 	<vlayout height="98%">
 		<div align="Right">
 			<button label="Export results as .zip" visible="true"

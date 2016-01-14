@@ -2,7 +2,7 @@
 	<style src="../css/main.css" />
 	<div id="linkageMappingSpecificationsWindow"
 		apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.pbtools.analysis.genomicsselection.bayesian.view.Index')"
+		viewModel="@id('vm') @init('org.pbtools.analysis.genomicsselection.bayesian.view.model.Index')"
 		height="100%">
 		<tabbox id="tb" width="100%" height="750px" mold="accordion">
 			<tabs>

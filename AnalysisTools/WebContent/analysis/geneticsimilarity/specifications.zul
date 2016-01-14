@@ -2,7 +2,7 @@
 	<style src="../css/main.css" />
 	<div id="singleSiteSpecificationsWindow"
 		apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('org.pbtools.analysis.geneticsimilarity.view.Index')"
+		viewModel="@id('vm') @init('org.pbtools.analysis.geneticsimilarity.view.model.Index')"
 		 height="100%" >
 		<vlayout>
 			<separator spacing="20px"/>

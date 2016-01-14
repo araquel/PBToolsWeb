@@ -5,4 +5,4 @@
  * @author araquel
  *
  */
-package org.pbtools.analysis.view;
+package org.pbtools.analysis.view.model;

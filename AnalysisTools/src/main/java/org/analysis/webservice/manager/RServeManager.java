@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pbtools.analysis.model.GeneticSimilarityModel;
+import org.pbtools.analysis.model.GenomicSelectionModel;
+import org.pbtools.analysis.model.MultiSiteAnalysisModel;
+import org.pbtools.analysis.model.QTLAnalysisModel;
+import org.pbtools.analysis.model.SingleSiteAnalysisModel;
 import org.pbtools.analysis.utilities.InputTransform;
-import org.pbtools.analysis.view.model.GeneticSimilarityModel;
-import org.pbtools.analysis.view.model.GenomicSelectionModel;
-import org.pbtools.analysis.view.model.MultiSiteAnalysisModel;
-import org.pbtools.analysis.view.model.QTLAnalysisModel;
-import org.pbtools.analysis.view.model.SingleSiteAnalysisModel;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;

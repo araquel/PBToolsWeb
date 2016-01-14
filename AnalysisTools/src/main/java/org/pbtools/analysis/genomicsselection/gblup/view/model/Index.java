@@ -1,4 +1,4 @@
-package org.pbtools.analysis.genomicsselection.bayesian.view;
+package org.pbtools.analysis.genomicsselection.gblup.view.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -15,8 +15,8 @@ import java.util.Map;
 
 import org.analysis.webservice.manager.RServeManager;
 import org.apache.commons.io.input.ReaderInputStream;
+import org.pbtools.analysis.model.GenomicSelectionModel;
 import org.pbtools.analysis.utilities.FileUtilities;
-import org.pbtools.analysis.view.model.GenomicSelectionModel;
 import org.pbtools.filesystem.manager.UserFileManager;
 import org.zkoss.bind.BindContext;
 import org.zkoss.bind.BindUtils;
@@ -48,11 +48,11 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public class Index {
 	private RServeManager rServeManager;
-	private GenomicSelectionModel bayesianModel;
+	private GenomicSelectionModel gblupModel;
 	private String errorMessage;
 
 	private ArrayList<String> listString;
-	private List<String> phenotypeFormat, typeOfDesignList, dataFormatList, traitType, imputationTypes, pModel, pMethod, lociMethod, scanType, relMatrixTypes;
+	private List<String> matrixTypes, fileFormats, imputationTypes, dataFormatList, genotypeFileMarkerFormats, mapMethod, pModel, pMethod, lociMethod, scanType;
 	private List<String> columnList = new ArrayList<String>();
 	private List<String> continuousVarsList = new ArrayList<String>(); // variable names(columns) from the cross data with Numeric Levels.
 	private List<String> binaryVarsList = new ArrayList<String>(); // variable names(columns) from the cross data with 2 Numeric Levels.
@@ -60,20 +60,22 @@ public class Index {
 	private List<String[]> dataList = new ArrayList<String[]>();
 	private List<String> crosstypeList;
 	private String[] crossTypeFunctions={"f2", "bc", "risib", "riself", "bcsft"};
-	private List<String> phenotypeFileFormats, genoFileFormats; //{"csv","txt","cro","raw", "qtx"};
+	private List<String> file1Formats; //{"csv","txt","cro","raw", "qtx"};
 	private List<String> file2Formats; //{"csv","txt","maps"};
+	private List<String> file3Formats; //{"csv","txt"};
 	BindContext ctx1, ctx2, ctx3;
 	Component view3, view1, view2;
 	InputStream in1, in2, in3;
-	
 	private String chosenCrosstype;
+
+
 	private String chosenMapping, fileName1, fileName2, fileName3, dataFileName, fileName, comboboxMapping, coboboxmapping2, comboboxmapping3, comboboxmapping4;
-	private String value1, value2, value3;
+	private String value1, value2, value3,value4;
 
 	private boolean mapping1, mapping2, mapping3, mapping4, isNewDataSet, isVariableDataVisible;
 	public boolean isUpdateMode = false;
 	public boolean isDataReUploaded = false, gridReUploaded = false;
-	
+
 	private int activePage = 0;
 	private int pageSize=10;
 	private int n;
@@ -84,11 +86,11 @@ public class Index {
 
 	private String selectedTraitType="Continuous";
 
-	private File tempFile,  file1, file2;
+	private File tempFile,  file1, file2, file3;
 	private Div defaultbox, phenobox, genobox, mfbox, datagroupbox, crossgroupbox, mapbox1, mapbox2, inputbox, divDatagrid, divDataCheckTxt, checkboxDiv;
 	private Vlayout divVlayout;
 	private Groupbox mfgroupbox, ggroupbox, pgroupbox, grpVariableData, grpDataCheckView;
-	
+
 	private Radio deleteRadioButton;
 	private Radio imputeRadioButton;
 	private Radio lijiRadioButton;
@@ -116,10 +118,13 @@ public class Index {
 	private Combobox genoFormat;
 	private Combobox mapFormat;
 	private Combobox comboPMethod;
-	
+
 	private Checkbox cbSetup1;
 	private Checkbox cbSetup2;
 	private Checkbox cbTraitYield;
+	//	private Checkbox cbTraitPitht;
+	//	private Checkbox cbTraitAwit;
+	//	private Checkbox cbTraitAwwd;
 	private Checkbox cbHpresent;
 	private Checkbox cbSetupModel;
 
@@ -128,21 +133,20 @@ public class Index {
 	private Textbox tbMaxNumber;
 	private File crossDataFile;
 	private Doublespinner dbLodCutOff;
-	
+
 	private Label lblBCSpinner, lblFSpinner;
 	private ArrayList<Checkbox> checkBoxList;
 	private String fileType;
+	private String fileName4;
+	private BindContext ctx4;
+	private Component view4;
+	private Object file4;
 
 	@AfterCompose
 	public void init(@ContextParam(ContextType.COMPONENT) Component component,
 			@ContextParam(ContextType.VIEW) Component view){
-		bayesianModel = new GenomicSelectionModel();
-		phenotypeFileFormats = getPhenotypeFileFormats();
-		genoFileFormats = getGenotypeFileFormats();
-		
 		defaultbox = (Div) component.getFellow("defaultbox");
 		createPhenoBox();
-		
 	}
 
 	private void makeDisable() {
@@ -162,6 +166,7 @@ public class Index {
 	}
 
 	@Command("validateInputFiles")
+	//	@NotifyChange("*")
 	public void validateInputFiles(@ContextParam(ContextType.COMPONENT) Component component,
 			@ContextParam(ContextType.VIEW) Component view){
 
@@ -173,18 +178,186 @@ public class Index {
 			@ContextParam(ContextType.VIEW) Component view){	
 		if(validateQtlModel()){
 			Map<String,Object> args = new HashMap<String,Object>();
-			args.put("bayesianModel", bayesianModel);
+			args.put("qtlModel", gblupModel);
 			BindUtils.postGlobalCommand(null, null, "displayQtlResult", args);
 		} else Messagebox.show(errorMessage);
 	}
 
 	private boolean validateQtlModel() {
-		
-		
-		return true;	
+		if(selectedTraitType!=null){
+//			gblupModel.setTraitType(selectedTraitType);
+			System.out.println("Chosen Method to find Loci: " + selectedTraitType);
+		}
+		else{			
+			errorMessage = "Please choose a trait type";
+			return false;
+		}
+
+		listString = getCheckedBoxes(checkBoxList);
+		if(listString.size()<1){//
+			errorMessage = "Please choose at least one trait";
+			return false;
+		}
+
+//		gblupModel.setmMethod(chosenMapping);
+		if(chosenMapping==null){
+			errorMessage = "Please choose mapping method";
+			return false;
+		}
+		else if(chosenMapping=="IM"){
+			Integer dbNPermutationsVal = dbNPermutations.getValue();
+//			gblupModel.setnPermutations(dbNPermutationsVal);
+			if(dbNPermutationsVal!=null)
+				System.out.println("Chosen value for Cut-off: " + dbNPermutationsVal);
+			if(comboboxMapping != null){
+//				gblupModel.setPhenoModel(comboboxMapping);
+				System.out.println("Chosen value for Phenotype Model: " + comboboxMapping);
+			}
+			else{
+				errorMessage = "Please choose value for Phenotype Model";
+				return false;
+			}
+			if(coboboxmapping2 !=null){
+//				gblupModel.setAlMethod(coboboxmapping2);
+				System.out.println("Chosen value for Method: " + coboboxmapping2);
+			}
+			else{
+				errorMessage = "Please choose value for Method";
+				return false; 
+			}
+		}
+		else if(chosenMapping=="CIM"){
+
+			boolean hpresent = cbHpresent.isChecked();
+			Double dbCimStepVal = dbCimStep.getValue();
+
+			if(hpresent)
+				System.out.println("Heterozygotes Present: Checked");
+			if(dbCimStepVal!=null)
+				System.out.println("Chosen value for Step: " + dbCimStepVal);
+
+			Double dbCimWinVal = dbCimWin.getValue();
+			if(dbCimWinVal!=null)
+				System.out.println("Chosen value for Window Size: " + dbCimWinVal);			
+
+			Double dbCimMinDistVal = dbCimMinDist.getValue();
+			if(dbCimMinDistVal!=null)
+				System.out.println("Chosen value for Minimum Distance: " + dbCimMinDistVal);
+
+			boolean Liji = lijiRadioButton.isSelected();
+			boolean Numerical = numericalRadioButton.isSelected();
+
+			if(Numerical!=true && Liji!=true){
+				errorMessage = "Please choose value for Threshold for p-value";
+				return false; 
+			}
+
+			if(Liji)
+				System.out.println("Li and Ji: Selected");
+			if(Numerical)
+				System.out.println("Numerical: Selected");
+
+			Double thresholdNumericalValue = dbthresholdNumericalValue.doubleValue();
+			if(thresholdNumericalValue!=null)
+				System.out.println("Chosen value for Numerical: " + thresholdNumericalValue);
+		}
+		else if(chosenMapping=="MQM"){
+
+			Double mqmStepVal = dbMqmStepVal.getValue();
+			if(mqmStepVal!=null)
+				System.out.println("Chosen value for Step Size: " + mqmStepVal);
+
+			Double mqmWinVal = dbMqmWinVal.getValue();
+			if(mqmWinVal!=null)
+				System.out.println("Chosen value for Window Size: " + mqmWinVal);
+
+			boolean additive = additiveRadioButton.isSelected();
+
+			boolean dominance = dominanceRadioButton.isSelected();
+
+			if(additive!=true && dominance!=true){
+				errorMessage = "Please choose value for Model";
+				return false; 
+			}
+
+			if(additive)
+				System.out.println("Additive: Selected");
+			if(dominance)
+				System.out.println("Dominance: Selected");
+
+			boolean ML = mLRadioButton.isSelected();
+
+			boolean REML = remlRadioButton.isSelected();
+
+			if(ML!=true && REML!=true){
+				errorMessage = "Please choose value for Algorithm";
+				return false; 
+			}
+
+			if(ML)
+				System.out.println("ML: Selected");
+			if(REML)
+				System.out.println("REML: Selected");
+
+		}
+		else if(chosenMapping=="Bayesian Mapping"){
+
+			Double bayesianStepSize = dbBayesianStepSize.getValue();
+			if(bayesianStepSize!=null)
+				System.out.println("Chosen value for Window Step: " + bayesianStepSize);
+
+			if(comboboxmapping3!=null){
+				System.out.println("Chosen Method to find Loci: " + comboboxmapping3);
+			}
+			else{
+				errorMessage = "Please choose value for Method to find Loci";
+				return false; 			
+			}
+			if(comboboxmapping4!=null)
+				System.out.println("Chosen Type of Scan: " + comboboxmapping4);
+			else{
+				errorMessage = "Please choose value for Type of scan";
+				return false; 	
+			}
+		}
+
+		boolean setupModel = cbSetupModel.isChecked();
+		if(setupModel)
+			System.out.println("Set-up Interacting QTL Model: Selected");
+
+		boolean setup1= cbSetup1.isChecked();
+		if(setup1 && cbSetup1.isDisabled()!=true)
+			System.out.println("Include Epistasis: Selected");
+
+		boolean setup2 = cbSetup2.isChecked();
+		if(setup2 && cbSetup2!=null)
+			System.out.println("Use Dependent Prior: Selected");
+
+		Double db16Value = dbMainEffects.getValue();
+		if(db16Value!=null && dbMainEffects.isDisabled()!=true)
+			System.out.println("No. of main effects in model: " + db16Value);
+
+		String maineffect = tbMEffect.getValue();
+		if(maineffect!=null && tbMEffect.isDisabled()!=true){
+			System.out.println("Main effect value: " + maineffect);
+		}
+
+		String all = tbAll.getValue();
+		if(all!=null && tbAll.isDisabled()!=true){
+			System.out.println("All value: " + all);
+		}
+
+		String maxnumber = tbMaxNumber.getValue();
+		if(maxnumber!=null && tbMaxNumber.isDisabled()!=true){
+			System.out.println("Max Number Value: " + maxnumber);
+		}
+
+		return true;
 	}
 
 	private ArrayList<String>  getCheckedBoxes(ArrayList<Checkbox> checkBoxList) {
+		// TODO Auto-generated method stub
+
 		ArrayList<String> ls= new ArrayList<String>();
 		for(Checkbox c: checkBoxList){
 			System.out.println(c.getLabel() +" is Checked?" +  c.isChecked());
@@ -240,7 +413,7 @@ public class Index {
 		else
 			dbLodThreshold.setDisabled(true);
 	}
-	
+
 	@Command("errorCheck")
 	public void errorCheck(){
 
@@ -285,6 +458,21 @@ public class Index {
 			tbMaxNumber.setDisabled(true);
 	}
 
+	@Command("visibility")
+	public void visibility(@BindingParam("selected") Integer selected){
+//
+//		this.selected = selected;
+//		if(selected == 0){
+//			gblupModel. setDataFormat("default");
+//			createPhenoBox();
+//			makeNull();
+//		}
+//		else{
+//			makeNull();
+//		}
+	}
+
+
 	@Command("choosePModel")
 	@NotifyChange("pMethod")
 	public void choosePModel(@BindingParam("selected") Comboitem selected){
@@ -302,33 +490,37 @@ public class Index {
 	private void makeNull(){
 		value1 = null;
 		value2 = null;
+		value3 = null;
 		file1 = null;
 		file2 = null;
+		file3 = null;
 		tempFile = null;
 		fileName1 = null;
 		fileName2 = null;
+		fileName3 = null;
 	}
-	
+
 	private void clearFileFormats() {
 		// TODO Auto-generated method stub
-		phenotypeFileFormats.clear();
+		file1Formats.clear();
 		file2Formats.clear();
 	}
 
 	public void createPhenoBox(){ 
-//		if (!defaultbox.getChildren().isEmpty())
-//			defaultbox.getFirstChild().detach();
+		//		if (!defaultbox.getChildren().isEmpty())
+		//			defaultbox.getFirstChild().detach();
+
 		Include includeDefaultzul = new Include();
 		includeDefaultzul.setId("includeDefaultzul");
-		includeDefaultzul.setSrc("/analysis/genomicsselection/bayesian/default.zul");
+		includeDefaultzul.setSrc("/analysis/genomicsselection/gblup/default.zul");
 		includeDefaultzul.setParent(defaultbox);
-		
 	}
 
 	public void detachDiv(Div div){
 		if (!div.getChildren().isEmpty()){
 			div.getFirstChild().detach();
 		}
+
 	}
 
 	@Command
@@ -352,7 +544,7 @@ public class Index {
 			mapping3=false; mapping4=true;
 		}
 	}
-	
+
 	@NotifyChange("pModel")
 	@Command
 	@DependsOn("selectedTraitType")
@@ -375,6 +567,7 @@ public class Index {
 	}
 
 	private void refreshTraitCheckboxes(List<String> varsListList) {
+		// TODO Auto-generated method stub
 		divVlayout.getChildren().clear();
 		createCheckboxes(varsListList);
 	}
@@ -391,9 +584,9 @@ public class Index {
 
 		tempFile = new File(event.getMedia().getName());
 		setFileName1(event.getMedia().getName());
-		System.out.println(tempFile.getAbsolutePath());	
+		System.out.println(tempFile.getAbsolutePath());
 		fileType = fileName1.split("\\.")[1];
-		
+
 		value1 = tempFile.getAbsolutePath();
 		if (file1 == null)
 			try {
@@ -403,20 +596,20 @@ public class Index {
 				e1.printStackTrace();
 			}
 
-		
-		if (!phenotypeFileFormats.contains(fileType)) {
+
+		if (!file1Formats.contains(fileType)) {
 			errorMessage = "Error: File must be in a ";
-			for(String s: phenotypeFileFormats){
+			for(String s: file1Formats){
 				errorMessage = errorMessage+"."+s;
 			}
 			Messagebox.show(errorMessage+" format",
 					"Upload Error", Messagebox.OK, Messagebox.ERROR);
 			return;
 		}
-		
+
 		in1 = event.getMedia().isBinary() ? event.getMedia().getStreamData() : new ReaderInputStream(event.getMedia().getReaderData());
-		bayesianModel.setPhenoFile(file1.getAbsolutePath());
-		bayesianModel.setpFormat(fileType);
+		gblupModel.setPhenoFile(file1.getAbsolutePath()); 
+		gblupModel.setpFormat(fileType);
 
 	}
 
@@ -434,17 +627,17 @@ public class Index {
 		setFileName2(event.getMedia().getName());
 		System.out.println(tempFile.getAbsolutePath());	
 		fileType = fileName2.split("\\.")[1];
-		
+
 		value2 = tempFile.getAbsolutePath();
 		if (file2 == null)
 			try {
-					file2 = File.createTempFile(fileName2, "."+fileType);
+				file2 = File.createTempFile(fileName2, "."+fileType);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 
-		
-		if (!genoFileFormats.contains(fileType)) {
+
+		if (!file2Formats.contains(fileType)) {
 			errorMessage = "Error: File must be in a ";
 			for(String s: file2Formats){
 				errorMessage = errorMessage+"."+s;
@@ -453,21 +646,89 @@ public class Index {
 					"Upload Error", Messagebox.OK, Messagebox.ERROR);
 			return;
 		}
-		
+
 
 		in2 = event.getMedia().isBinary() ? event.getMedia().getStreamData() : new ReaderInputStream(event.getMedia().getReaderData());
-		
-//		bayesianModel.setResultFolderPath(file2.getAbsolutePath());
-		bayesianModel.setPhenoFile(file2.getAbsolutePath());
-		bayesianModel.setpFormat(fileType);
+
+		gblupModel.setgFormat(file2.getAbsolutePath());
+		gblupModel.setgFormat(fileType);
 	}
 
+	@NotifyChange("*")
+	@Command("chooseFile1value3")
+	public void chooseFileValue3(@ContextParam(ContextType.BIND_CONTEXT) BindContext ctx,
+			@ContextParam(ContextType.VIEW) Component view, @BindingParam("fileFormat") Integer formatIndex) 
+					throws Exception{
+
+		UploadEvent event = (UploadEvent) ctx.getTriggerEvent();
+
+		this.ctx3=ctx;
+		this.view3=view;
+
+		tempFile = new File(event.getMedia().getName());
+		setFileName3(event.getMedia().getName());
+		System.out.println(tempFile.getAbsolutePath());	
+
+		value3 = tempFile.getAbsolutePath();
+		if (file3 == null)
+			try {
+				file3 = File.createTempFile(fileName3, ".csv");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+
+		if (!fileName3.endsWith(".csv") && !fileName3.endsWith(".txt")) {
+			Messagebox.show("Error: File must be in a .txt or .csv format",
+					"Upload Error", Messagebox.OK, Messagebox.ERROR);
+			return;
+		}
+
+		in3 = event.getMedia().isBinary() ? event.getMedia().getStreamData() : new ReaderInputStream(event.getMedia().getReaderData());
+		gblupModel.setMapFile(file3.getAbsolutePath());
+		gblupModel.setmFormat("csv");
+	}
+
+	@NotifyChange("*")
+	@Command("chooseFile1value4")
+	public void chooseFile1value4(@ContextParam(ContextType.BIND_CONTEXT) BindContext ctx,
+			@ContextParam(ContextType.VIEW) Component view, @BindingParam("fileFormat") Integer formatIndex) 
+					throws Exception{
+
+		UploadEvent event = (UploadEvent) ctx.getTriggerEvent();
+
+		this.ctx4=ctx;
+		this.view4=view;
+
+		tempFile = new File(event.getMedia().getName());
+		setFileName4(event.getMedia().getName());
+		System.out.println(tempFile.getAbsolutePath());	
+
+		value4 = tempFile.getAbsolutePath();
+		if (file4 == null)
+			try {
+				file4 = File.createTempFile(fileName4, ".csv");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+
+		if (!fileName4.endsWith(".csv") && !fileName4.endsWith(".txt")) {
+			Messagebox.show("Error: File must be in a .txt or .csv format",
+					"Upload Error", Messagebox.OK, Messagebox.ERROR);
+			return;
+		}
+
+		in3 = event.getMedia().isBinary() ? event.getMedia().getStreamData() : new ReaderInputStream(event.getMedia().getReaderData());
+//		gblupModel.setMarkerFormat(fileType);
+//		gblupModel.setmFormat("csv");
+	}
+	
 	@Command
 	@DependsOn("selected")
 	public void uploadFiles(){
 		if(selected == 0){
 			uploadFile1();
 			uploadFile2();
+			uploadFile3();
 			makeNull();
 		}
 		else if(selected == 1 || selected == 2){
@@ -483,12 +744,15 @@ public class Index {
 			System.out.println("N/A");
 		}
 		rServeManager = new RServeManager();
-		System.out.println(bayesianModel.toString());
-		rServeManager.doGSDataPrep(bayesianModel);
-		displayCrossData(bayesianModel.getResultFolderPath());
+		System.out.println(gblupModel.toString());
+//		rServeManager.doCreateQTLData(gblupModel);
+		//
+		//		displayCrossData(qtlModel.getResultFolderPath());
 	}
 
 	private void displayCrossData(String resultFolderPath) {
+		// TODO Auto-generated method stub
+
 		crossDataFile = new File(resultFolderPath+"crossData.csv");
 
 		if (crossDataFile == null)
@@ -501,7 +765,7 @@ public class Index {
 		dataFileName = crossDataFile.getName();
 		refreshCsv();
 		if (this.isUpdateMode) setNewDataSet(true);
-		
+
 	}
 
 	private void uploadFile1(){
@@ -513,7 +777,7 @@ public class Index {
 		File uploadedFile = FileUtilities.getFileFromUpload(ctx1, view1);
 
 		UserFileManager userFileManager = new UserFileManager();
-//		String filePath = userFileManager.uploadFileForAnalysis(fileName1, uploadedFile);
+		String filePath = userFileManager.uploadFileForAnalysis(fileName1, uploadedFile);
 	}
 
 	private void uploadFile2(){
@@ -524,7 +788,19 @@ public class Index {
 		File uploadedFile = FileUtilities.getFileFromUpload(ctx2, view2);
 
 		UserFileManager userFileManager = new UserFileManager();
-//		String filePath = userFileManager.uploadFileForAnalysis(fileName2, uploadedFile);
+		String filePath = userFileManager.uploadFileForAnalysis(fileName2, uploadedFile);
+	}
+
+	private void uploadFile3(){
+
+		System.out.println(file3.getAbsolutePath());
+		FileUtilities.uploadFile(file3.getAbsolutePath(), in3);
+		BindUtils.postNotifyChange(null, null, this, "*");
+
+		File uploadedFile = FileUtilities.getFileFromUpload(ctx3, view3);
+
+		UserFileManager userFileManager = new UserFileManager();
+		String filePath = userFileManager.uploadFileForAnalysis(fileName3, uploadedFile);
 	}
 
 	@Command("refreshCsv")
@@ -543,13 +819,13 @@ public class Index {
 			rawData.remove(0);
 			dataList = new ArrayList<String[]>(rawData);
 			System.out.println(Arrays.toString(dataList.get(0)));
-			
+
 			continuousVarsList = getContinuousVarsFromList(columnList);
 			binaryVarsList = getBinaryVarsFromList(continuousVarsList);
 			ordinalVarsList = getOrdinalVarsFromList(continuousVarsList);
-			
+
 			createCheckboxes(continuousVarsList);
-			
+
 			if (!this.isDataReUploaded)
 				System.out.println("gbUploadData.invalidate()");
 		} catch (FileNotFoundException e) {
@@ -565,42 +841,46 @@ public class Index {
 	}
 
 	private void createCheckboxes(List<String> varList) {
+		// TODO Auto-generated method stub
 		Checkbox newCheckbox= new Checkbox();
 		for(String s: varList){
-			 newCheckbox= new Checkbox(s);
-//			newCheckbox.setLabel(s);
-			 divVlayout.appendChild(newCheckbox);
+			newCheckbox= new Checkbox(s);
+			//			newCheckbox.setLabel(s);
+			divVlayout.appendChild(newCheckbox);
 			newCheckbox.setParent(divVlayout);
 			checkBoxList.add(newCheckbox);
 			divVlayout.setVisible(true);
-			
+
 		}
 	}
 
 	private List<String> getOrdinalVarsFromList(List<String> numvarList) {
+		// TODO Auto-generated method stub
 		List<String> varList = new ArrayList<String>();
 		for(String s:numvarList){
 			if(rServeManager.getLevels(columnList, dataList, s).length>=2){//if levels is atleast 2
 				varList.add(s);
 			}
 		}
-	return varList;
+		return varList;
 	}
-	
+
 	private List<String> getBinaryVarsFromList(List<String> numvarList) {
+		// TODO Auto-generated method stub
 		List<String> varList = new ArrayList<String>();
-			for(String s:numvarList){
-				if(rServeManager.getLevels(columnList, dataList, s).length==2){//if levels is only 2
-					varList.add(s);
-				}
+		for(String s:numvarList){
+			if(rServeManager.getLevels(columnList, dataList, s).length==2){//if levels is only 2
+				varList.add(s);
 			}
+		}
 		return varList;
 	}
 	private List<String> getContinuousVarsFromList(List<String> columnNames) {
+		// TODO Auto-generated method stub
 		List<String> varList = new ArrayList<String>();
 		rServeManager = new RServeManager();
 		for(String s:columnNames){
-			if(rServeManager.isColumnNumeric(bayesianModel.getResultFolderPath()+"crossData.csv", s).equals("TRUE")){
+			if(rServeManager.isColumnNumeric(gblupModel.getResultFolderPath()+"crossData.csv", s).equals("TRUE")){
 				varList.add(s);
 			}
 		}
@@ -608,7 +888,7 @@ public class Index {
 		rServeManager.end();
 		return varList;
 	}
-	
+
 	public ArrayList<ArrayList<String>> getCsvData() {
 		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
 		if (dataList.isEmpty())
@@ -637,35 +917,36 @@ public class Index {
 	}
 
 	public void reloadTxtGrid() {
-//		grpDataCheckView.setVisible(true);
-//		
-//		if (!divDataCheckTxt.getChildren().isEmpty())
-//			divDataCheckTxt.getFirstChild().detach();
-//
-////		File fileToCreate = new File(bayes);--------------------------------------------------------------------------------------------------------------
-//		byte[] buffer = new byte[(int) fileToCreate.length()];
-//		FileInputStream fs;
-//		try {
-//			fs = new FileInputStream(fileToCreate);
-//			fs.read(buffer);
-//			fs.close();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//		ByteArrayInputStream is = new ByteArrayInputStream(buffer);
-//		AMedia fileContent = new AMedia("report", "text", "text/plain", is);
-//		Include studyInformationPage = new Include();
-//		studyInformationPage.setParent(divDataCheckTxt);
-//		studyInformationPage.setDynamicProperty("txtFile", fileContent);
-//		studyInformationPage.setSrc("/analysis/txtviewer.zul");
+		grpDataCheckView.setVisible(true);
+
+		if (!divDataCheckTxt.getChildren().isEmpty())
+			divDataCheckTxt.getFirstChild().detach();
+
+		File fileToCreate = new File(gblupModel.getDoCV());
+		byte[] buffer = new byte[(int) fileToCreate.length()];
+		FileInputStream fs;
+		try {
+			fs = new FileInputStream(fileToCreate);
+			fs.read(buffer);
+			fs.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		ByteArrayInputStream is = new ByteArrayInputStream(buffer);
+		AMedia fileContent = new AMedia("report", "text", "text/plain", is);
+		Include studyInformationPage = new Include();
+		studyInformationPage.setParent(divDataCheckTxt);
+		studyInformationPage.setDynamicProperty("txtFile", fileContent);
+		studyInformationPage.setSrc("/analysis/txtviewer.zul");
+
 	}
 
-	
+
 	public static List<String> mMethod(){
 		return Arrays.asList(new String[]{"IM", "CIM", "MQM", "Bayesian Mapping", "Two-d Mapping", "QTLRel", "MAGIC"});
 	}
@@ -692,15 +973,15 @@ public class Index {
 	public static List<String> pMList(){
 		return Arrays.asList(new String[]{"Normal", "Binary", "Two-Part", "Non-parametric"});
 	}
-	
+
 	public static List<String> continuousMList(){
 		return Arrays.asList(new String[]{"Normal", "Two-Part", "Non-parametric"});
 	}
-	
+
 	public static List<String> binaryMList(){
 		return Arrays.asList(new String[]{ "Binary"});
 	}
-	
+
 	public static List<String> ordinalMList(){
 		return Arrays.asList(new String[]{"Non-parametric"});
 	}
@@ -711,7 +992,7 @@ public class Index {
 	public static List<String> pMethodBInaryList(){
 		return Arrays.asList(new String[]{"Maximum Likehood via EM", "Haley-Knott Regression"});
 	}	
-	
+
 	public static List<String> genotype(){
 		return Arrays.asList(new String[]{"Comma-separated (.csv) file", "Tab Delimited text (.txt) file"});
 	}
@@ -722,7 +1003,7 @@ public class Index {
 
 	public List<String[]> getDataList() {
 		System.out.println("DatALIST GEt");
-		
+
 		if (true)
 			return dataList;
 
@@ -735,36 +1016,32 @@ public class Index {
 		return pageData;
 	}
 
-	public List<String> getTypeOfDesignList() {
-		return typeOfDesignList;
+	public List<String> getImputationTypes() {
+			return Arrays.asList(new String[]{"random", "family"});
 	}
 
 	public boolean checkVisibility(int num){
 		return true;
 	}
 
-	public void setTypeOfDesignList(List<String> typeOfDesignList) {
-		this.typeOfDesignList = typeOfDesignList;
-	}
-
 	public List<String> getDataFormatList() {
-	 	return Arrays.asList(new String[]{"default","synbreed gpData"});
+		return Arrays.asList(new String[]{"default","synbreed gpData"});
 	}
 
 	public void setDataFormatList(List<String> dataFormatList) {
 		this.dataFormatList = dataFormatList;
 	}
 
-	public List<String> getTraitType() {
-		return traitType;
+	public List<String> getGenotypeFileMarkerFormats() {
+		return Arrays.asList(new String[]{"AA, AB, BB, NA", "AG, CT, ..., NA", "A/G, C/T, NA", "0(AA), 1(AB), 2(BB), NA", "No heterozygous genotype"});
 	}
 
-	public void setTraitType(List<String> traitType) {
-		this.traitType = traitType;
+	public List<String> getMapMethod() {
+		return mapMethod;
 	}
 
-	public List<String> getImputationTypes() {
-	 	return Arrays.asList(new String[]{"fix", "random", "family", "beagle", "beagleAfterFamily"});
+	public void setMapMethod(List<String> mapMethod) {
+		this.mapMethod = mapMethod;
 	}
 
 	public String getchosenCrosstype() {
@@ -988,44 +1265,15 @@ public class Index {
 		this.inputbox = inputbox;
 	}
 
-	public List<String> getModelTypes(){
-		return Arrays.asList(new String[]{ "Bayes A", "Bayes B", "Bayes C", "Bayesian Lasso", "Bayesian Ridge Regression"});
+	public List<String> getMatrixTypes() {
+		return Arrays.asList(new String[]{"realized relatedness (Habier/Van Raden)","realized relatedness (Astle and Balding)","realized relatedness by simple matching","realized relatedness by corrected simple matching"});
+	}
+	public List<String> getFileFormats() {
+		return Arrays.asList(new String[]{"Space-separated (.txt)", "Comma-separated (.csv)", "Tab-separated (.txt)", "Semi-colon-separated (.txt)"});
 	}
 
-	public List<String> getSamplingStrategies(){
-		return Arrays.asList(new String[]{ "random", "within population structure", "across population structure"});
-	}
-	
-	public List<String> getPhenotypeFormat() {
-		return Arrays.asList(new String[]{"Comma-separated (.csv) ", "Comma-separated (.txt)", "Space-separated (.txt)", "Tab-separated (.txt)", "Semi-colon-separated (.txt)"});
-	}
-
-	public List<String> getPhenotypeFileFormats() {
-		return Arrays.asList(new String[]{"csv", "ctxt", "stxt", "ttxt", "sctxt"});
-	}
-	
-	public List<String> getRelMatrixTypes() {
-		return Arrays.asList(new String[]{"realized relatedness (Habier/Van Raden)", "realized relatedness (Astle and Balding)", "realized relatedness by simple matching", "realized relatedness by corrected simple matching"});
-	}
-	
-	public List<String> getTraitTypes() {
-		return Arrays.asList(new String[]{"Yield", "Height"});
-	}
-	public List<String> getTraitHeritabilityTypes() {
-		return Arrays.asList(new String[]{"High", "Medium", "Low"});
-	}
-	
-	public List<String> getGenotypeFormat() {
-		return Arrays.asList(new String[]{"Comma-separated (.csv) ", "Tab-separated (.txt)"});
-	}
-
-	public List<String> getGenotypeFileFormats() {
-		return Arrays.asList(new String[]{"csv",  "ttxt" });
-	}
-	
-
-	public void setPhenotypeFormat(List<String> phenotypeFormat) {
-		this.phenotypeFormat = phenotypeFormat;
+	public void setMatrixTypes(List<String> matrixTypes) {
+		this.matrixTypes = matrixTypes;
 	}
 
 	public Integer getSelected() {
@@ -1062,7 +1310,17 @@ public class Index {
 	public void setValue3(String value3) {
 		this.value3 = value3;
 	}
+	
+	
 
+
+	public String getValue4() {
+		return value4;
+	}
+
+	public void setValue4(String value4) {
+		this.value4 = value4;
+	}
 
 	public File getFile1() {
 		return file1;
@@ -1079,6 +1337,15 @@ public class Index {
 
 	public void setFile2(File file2) {
 		this.file2 = file2;
+	}
+
+
+	public File getFile3() {
+		return file3;
+	}
+
+	public void setFile3(File file3) {
+		this.file3 = file3;
 	}
 
 
@@ -1108,7 +1375,10 @@ public class Index {
 		this.fileName3 = fileName3;
 	}
 
-
+	public void setFileName4(String fileName4) {
+		this.fileName4 = fileName4;
+	}
+	
 	public int getPageSize() {
 		return pageSize;
 	}
@@ -1275,4 +1545,6 @@ public class Index {
 	public void setSelectedFileFormat(Integer selectedFileFormat) {
 		this.selectedFileFormat = selectedFileFormat;
 	}
+	
+	
 }

@@ -1,4 +1,4 @@
-package org.pbtools.analysis.view;
+package org.pbtools.analysis.view.model;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;

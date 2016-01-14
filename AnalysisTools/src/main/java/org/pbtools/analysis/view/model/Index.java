@@ -1,4 +1,4 @@
-package org.pbtools.analysis.view;
+package org.pbtools.analysis.view.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -12,10 +12,10 @@ import java.util.Set;
 
 import org.analysis.webservice.manager.RServeManager;
 import org.analysis.webservice.manager.WebServiceManager;
+import org.pbtools.analysis.model.MultiSiteAnalysisModel;
+import org.pbtools.analysis.model.QTLAnalysisModel;
+import org.pbtools.analysis.model.SingleSiteAnalysisModel;
 import org.pbtools.analysis.utilities.AnalysisUtils;
-import org.pbtools.analysis.view.model.MultiSiteAnalysisModel;
-import org.pbtools.analysis.view.model.QTLAnalysisModel;
-import org.pbtools.analysis.view.model.SingleSiteAnalysisModel;
 import org.zkoss.bind.BindUtils;
 //import org.pbtools.analysis.singlesite.view.model.MultiSiteAnalysisModel;
 //import org.pbtools.analysis.singlesite.view.model.QTLAnalysisModel;

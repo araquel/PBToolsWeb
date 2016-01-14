@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.analysis.webservice.manager.RServeManager;
+import org.pbtools.analysis.model.SingleSiteAnalysisModel;
 import org.pbtools.analysis.utilities.AnalysisUtils;
-import org.pbtools.analysis.view.model.SingleSiteAnalysisModel;
 import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;

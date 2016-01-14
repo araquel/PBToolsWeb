@@ -9,8 +9,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import org.pbtools.analysis.model.SingleSiteAnalysisModel;
 import org.pbtools.analysis.utilities.InputTransform;
-import org.pbtools.analysis.view.model.SingleSiteAnalysisModel;
 import org.zkoss.zk.ui.Sessions;
 
 import com.google.gson.Gson;

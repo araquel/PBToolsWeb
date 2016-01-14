@@ -1,4 +1,4 @@
-package org.pbtools.analysis.geneticsimilarity.view;
+package org.pbtools.analysis.geneticsimilarity.view.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.analysis.webservice.manager.RServeManager;
 import org.apache.commons.io.input.ReaderInputStream;
-import org.pbtools.analysis.view.model.GeneticSimilarityModel;
+import org.pbtools.analysis.model.GeneticSimilarityModel;
 import org.zkoss.bind.BindContext;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.AfterCompose;

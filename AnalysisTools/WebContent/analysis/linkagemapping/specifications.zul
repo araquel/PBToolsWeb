@@ -31,7 +31,7 @@
 							<spinner id="spinnerBCnum" value="0" visible="false" />
 							<label id="lblFSpinner" value="F:" visible="true"/>
 							<spinner id="spinnerFnum" value="0" visible="true" />
-							<separator bar="true" />
+							<separator bar="false" />
 							Data Format:
 							<combobox id="dataformat"
 								model="@load(vm.dataFormatList)"

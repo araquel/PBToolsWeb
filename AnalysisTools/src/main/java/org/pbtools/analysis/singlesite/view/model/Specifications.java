@@ -24,10 +24,10 @@ import javax.ws.rs.core.Response;
 import org.analysis.webservice.manager.RServeManager;
 import org.analysis.webservice.manager.WebServiceManager;
 import org.apache.commons.io.input.ReaderInputStream;
+import org.pbtools.analysis.model.FileResourceModel;
+import org.pbtools.analysis.model.SingleSiteAnalysisModel;
 import org.pbtools.analysis.utilities.AnalysisUtils;
 import org.pbtools.analysis.utilities.FileUtilities;
-import org.pbtools.analysis.view.model.FileResourceModel;
-import org.pbtools.analysis.view.model.SingleSiteAnalysisModel;
 import org.pbtools.filesystem.manager.UserFileManager;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -318,7 +318,6 @@ public class Specifications {
 			activateFixedOptions(false);
 			if(!checkBoxExcludeControls.isChecked() || !randomCheckBox.isChecked()) activateLevelOfConrolsOptions(false);
 			else if(ssaModel.getDesign()==1 || ssaModel.getDesign()==2) activateLevelOfConrolsOptions(false);
-
 		}
 	}
 

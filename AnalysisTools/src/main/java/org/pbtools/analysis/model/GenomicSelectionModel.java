@@ -1,4 +1,4 @@
-package org.pbtools.analysis.view.model;
+package org.pbtools.analysis.model;
 
 import org.pbtools.analysis.utilities.AnalysisUtils;
 import org.zkoss.zk.ui.Sessions;

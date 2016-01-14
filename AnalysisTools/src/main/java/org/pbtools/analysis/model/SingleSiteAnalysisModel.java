@@ -1,4 +1,4 @@
-package org.pbtools.analysis.view.model;
+package org.pbtools.analysis.model;
 
 import java.util.List;
 
